@@ -1,17 +1,19 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Register from './screens/Register';
-import AppNavigator from './navigations/AppNavigator';
+import React, { useState } from 'react';
+import AppNavigator from './navigation/AppNavigator';
+import * as Fonts from 'expo-font';
+import { AppLoading } from 'expo';
+
+const fetchFonts = () => {
+    return Fonts.loadAsync({
+        'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+        'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+    });
+};
 
 export default function App() {
+    const [dataLoaded, setDataLoaded] = useState(false);
+    if (!dataLoaded) {
+        return <AppLoading startAsync={fetchFonts} onFinish={() => setDataLoaded(true)} />;
+    }
     return <AppNavigator />;
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});

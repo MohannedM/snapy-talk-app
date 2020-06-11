@@ -1,23 +1,30 @@
 import React from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    Platform,
-    ScrollView,
-    TextInput,
-    ViewStyle,
-    Dimensions,
-    Keyboard,
-    Button,
-} from 'react-native';
+import { View, StyleSheet, Platform, TextInput, ViewStyle, Dimensions, Keyboard } from 'react-native';
 import Colors from '../constants/Colors';
 import Card from '../components/UI/Card';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import CustomButton from '../components/UI/CustomButton';
+import { LinearGradient } from 'expo-linear-gradient';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const Register: React.FC = (props) => {
+interface Props {
+    navigation: StackNavigationProp<any, any>;
+}
+
+const Register: React.FC<Props> = (props) => {
     return (
         <View style={styles.container}>
+            <LinearGradient
+                colors={[Colors.primary[0], Colors.secondary[0]]}
+                style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    height: '100%',
+                }}
+            />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.subContainer}>
                 <Card style={styles.card}>
                     <TextInput style={styles.inputs} placeholder="First Name" maxLength={10} textContentType="name" />
@@ -42,10 +49,26 @@ const Register: React.FC = (props) => {
                     />
                     <View style={styles.actions}>
                         <View>
-                            <Button title="Register" onPress={() => {}} color={Colors.primary[1]} />
+                            <CustomButton
+                                onPress={() => {
+                                    console.log('ay 7aga');
+                                }}
+                                type="Primary"
+                                style={styles.actionButtons}
+                            >
+                                Register
+                            </CustomButton>
                         </View>
                         <View>
-                            <Button title="Switch to login" onPress={() => {}} color={Colors.secondary[1]} />
+                            <CustomButton
+                                onPress={() => {
+                                    props.navigation.replace('Login');
+                                }}
+                                type="Secondary"
+                                style={styles.actionButtons}
+                            >
+                                Switch to login
+                            </CustomButton>
                         </View>
                     </View>
                 </Card>
@@ -56,11 +79,15 @@ const Register: React.FC = (props) => {
 
 interface Styles {
     container: ViewStyle;
+    subContainer: ViewStyle;
     card: ViewStyle;
     inputs: ViewStyle;
+    actions: ViewStyle;
+    actionButtons: ViewStyle;
+    gradient: ViewStyle;
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<Styles>({
     container: {
         flex: 1,
         backgroundColor: '#fff',
@@ -72,9 +99,11 @@ const styles = StyleSheet.create({
         borderColor: '#f6f6f6',
         borderWidth: 2,
         backgroundColor: '#fff',
+        opacity: 0.75,
         minHeight: '65%',
         minWidth: '75%',
         marginTop: Dimensions.get('window').height / 10,
+        padding: 20,
     },
     inputs: {
         padding: 10,
@@ -93,9 +122,19 @@ const styles = StyleSheet.create({
     },
     actions: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         alignItems: 'center',
         margin: 10,
+    },
+    actionButtons: {
+        minWidth: '40%',
+    },
+    gradient: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        height: '100%',
     },
 });
 

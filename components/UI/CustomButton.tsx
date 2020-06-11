@@ -1,41 +1,52 @@
 import React from 'react';
-import {
-    View,
-    TouchableOpacity,
-    TouchableNativeFeedback,
-    Platform,
-    StyleSheetProperties,
-    StyleSheet,
-} from 'react-native';
+import { View, Text, Platform, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import Colors from '../../constants/Colors';
+import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-handler';
 
 interface Props {
-    onPress: () => void;
-    style?: StyleSheetProperties;
+    onPress: () => any;
+    style?: ViewStyle;
     type: 'Primary' | 'Secondary';
 }
 
-const SecondaryComponent: React.FC<Props> = (props) => {
+const CustomButton: React.FC<Props> = (props) => {
     let TouchableCmp: any = TouchableOpacity;
     if (Platform.OS === 'android') {
         TouchableCmp = TouchableNativeFeedback;
     }
     return (
-        <View>
-            <TouchableCmp
-                onPress={() => {
-                    props.onPress();
+        <TouchableCmp activeOpacity={0.6} onPress={props.onPress}>
+            <View
+                style={{
+                    ...props.style,
+                    ...styles.button,
+                    ...{ backgroundColor: props.type === 'Primary' ? Colors.primary[1] : Colors.secondary[1] },
                 }}
-                style={{ ...props.style }}
-            />
-        </View>
+            >
+                <Text style={styles.buttonText}>{props.children}</Text>
+            </View>
+        </TouchableCmp>
     );
 };
 
-interface Styles {}
+// interface CustomFont {
+//     fontStyle?: 'open-sans' | 'open-sans-bold';
+// }
+interface Styles {
+    button: ViewStyle;
+    buttonText: TextStyle;
+}
 
-const styles = StyleSheet.create({
-    container: {},
-    button: {},
+const styles = StyleSheet.create<Styles>({
+    button: {
+        borderRadius: 10,
+        padding: 12,
+    },
+    buttonText: {
+        color: '#fff',
+        textAlign: 'center',
+        fontWeight: '700',
+    },
 });
 
-export default SecondaryComponent;
+export default CustomButton;

@@ -2,8 +2,8 @@ const Colors: {
     primary: string[];
     secondary: string[];
 } = {
-    primary: ['#f1f4fc', '#2446a8', '#0f1d46'],
-    secondary: ['#f7dcee', '#d554af', '#66194f'],
+    primary: ['#faeaf5', '#dc6fbc', '#c6309a'],
+    secondary: ['#dbdcfe', '#575bfa', '#0509a2'],
 };
 
 export default Colors;
