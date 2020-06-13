@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import AppNavigator from './navigation/AppNavigator';
 import * as Fonts from 'expo-font';
 import { AppLoading } from 'expo';
+import { Provider } from 'react-redux';
+import { store } from './store';
 
 const fetchFonts = () => {
     return Fonts.loadAsync({
@@ -15,5 +17,9 @@ export default function App() {
     if (!dataLoaded) {
         return <AppLoading startAsync={fetchFonts} onFinish={() => setDataLoaded(true)} />;
     }
-    return <AppNavigator />;
+    return (
+        <Provider store={store}>
+            <AppNavigator />
+        </Provider>
+    );
 }
