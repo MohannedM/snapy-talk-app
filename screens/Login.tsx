@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, Platform, TextInput, ViewStyle, Dimensions, Keyboard } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Platform, TextInput, ViewStyle, Dimensions, Keyboard, TextStyle, Text } from 'react-native';
 import Colors from '../constants/Colors';
 import Card from '../components/UI/Card';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -7,12 +7,84 @@ import CustomButton from '../components/UI/CustomButton';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { StackNavigationProp } from '@react-navigation/stack';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { login } from '../store/actions';
+import { loginInputType, loginType } from '../store/types/auth.module';
+import { AppState } from '../store';
 
 interface Props {
     navigation: StackNavigationProp<any, any>;
+    onLogin: (authData: loginInputType) => loginType;
+    isLoading: boolean;
 }
 
 const Login: React.FC<Props> = (props) => {
+    const [inputState, setInputState] = useState({
+        email: '',
+        password: '',
+        errors: {
+            email: {
+                touched: false,
+                message: '',
+                error: true,
+            },
+            password: {
+                touched: false,
+                message: '',
+                error: true,
+            },
+        },
+    });
+
+    const setUserInput = (
+        value: string,
+        inputName: 'firstName' | 'lastName' | 'email' | 'password',
+        isInputValid: boolean,
+        errorMessage: string,
+    ) => {
+        if (isInputValid) {
+            setInputState((prevState) => {
+                return {
+                    ...prevState,
+                    [inputName]: value,
+                    errors: { ...prevState.errors, [inputName]: { touched: true, message: '', error: false } },
+                };
+            });
+        } else {
+            setInputState((prevState) => {
+                return {
+                    ...prevState,
+                    [inputName]: value,
+                    errors: { ...prevState.errors, [inputName]: { touched: true, message: errorMessage, error: true } },
+                };
+            });
+        }
+    };
+
+    const setEmail = (value: string) => {
+        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const isValid = emailRegex.test(value);
+        setUserInput(value, 'email', isValid, 'Email is invalid.');
+    };
+
+    const setPassword = (value: string) => {
+        const isValid = value.length >= 6 && value.length <= 20;
+        setUserInput(value, 'password', isValid, 'Password should be from 6 to 20 characters.');
+    };
+
+    let isDisabled: boolean = true;
+    const errors = { ...inputState.errors };
+    let inputType: 'email' | 'password';
+    for (inputType in errors) {
+        if (errors[inputType].error) {
+            isDisabled = true;
+            break;
+        } else {
+            isDisabled = false;
+        }
+    }
+
     return (
         <View style={styles.container}>
             <LinearGradient colors={[Colors.primary[0], Colors.secondary[0]]} style={styles.gradient} />
@@ -23,17 +95,35 @@ const Login: React.FC<Props> = (props) => {
                         placeholder="Email"
                         maxLength={30}
                         textContentType="emailAddress"
+                        value={inputState.email}
+                        onChangeText={setEmail}
                     />
+                    {inputState.errors.email.error && inputState.errors.email.touched && (
+                        <Text style={styles.errorMessage}>{inputState.errors.email.message}</Text>
+                    )}
                     <TextInput
                         style={styles.inputs}
                         placeholder="Password"
                         maxLength={14}
                         textContentType="password"
                         secureTextEntry
+                        value={inputState.password}
+                        onChangeText={setPassword}
                     />
+                    {inputState.errors.password.error && inputState.errors.password.touched && (
+                        <Text style={styles.errorMessage}>{inputState.errors.password.message}</Text>
+                    )}
                     <View style={styles.actions}>
                         <View>
-                            <CustomButton onPress={() => {}} type="Primary" style={styles.actionButtons}>
+                            <CustomButton
+                                onPress={() => {
+                                    props.onLogin({ email: inputState.email, password: inputState.password });
+                                }}
+                                type="Primary"
+                                isDisabled={isDisabled}
+                                style={styles.actionButtons}
+                                isLoading={props.isLoading}
+                            >
                                 Login
                             </CustomButton>
                         </View>
@@ -63,6 +153,7 @@ interface Styles {
     actions: ViewStyle;
     actionButtons: ViewStyle;
     gradient: ViewStyle;
+    errorMessage: TextStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
@@ -114,6 +205,10 @@ const styles = StyleSheet.create<Styles>({
         top: 0,
         height: '100%',
     },
+    errorMessage: {
+        color: Colors.primary[2],
+        fontSize: 10,
+    },
 });
 
 export const loginScreenOptions = () => {
@@ -129,4 +224,16 @@ export const loginScreenOptions = () => {
     };
 };
 
-export default Login;
+const mapStateToProps = (state: AppState) => {
+    return {
+        isLoading: state.auth.loading,
+    };
+};
+
+export const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+        onLogin: (authData: loginInputType) => dispatch(login(authData)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

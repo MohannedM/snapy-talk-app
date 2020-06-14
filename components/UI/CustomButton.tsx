@@ -1,31 +1,43 @@
 import React from 'react';
-import { View, Text, Platform, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import Colors from '../../constants/Colors';
-import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface Props {
     onPress: () => any;
     style?: ViewStyle;
     type: 'Primary' | 'Secondary';
+    isDisabled?: boolean;
+    isLoading?: boolean;
 }
 
 const CustomButton: React.FC<Props> = (props) => {
-    let TouchableCmp: any = TouchableOpacity;
-    if (Platform.OS === 'android') {
-        TouchableCmp = TouchableNativeFeedback;
-    }
+    const bgColor = {
+        Primary: props.isDisabled ? Colors.primary[0] : Colors.primary[1],
+        Secondary: props.isDisabled ? Colors.secondary[0] : Colors.secondary[1],
+    };
     return (
-        <TouchableCmp activeOpacity={0.6} onPress={props.onPress}>
+        <TouchableOpacity activeOpacity={0.6} onPress={props.onPress} disabled={props.isDisabled}>
             <View
                 style={{
                     ...props.style,
                     ...styles.button,
-                    ...{ backgroundColor: props.type === 'Primary' ? Colors.primary[1] : Colors.secondary[1] },
+                    ...{ backgroundColor: bgColor[props.type] },
                 }}
             >
-                <Text style={styles.buttonText}>{props.children}</Text>
+                <View>
+                    <Text style={styles.buttonText}>{props.children}</Text>
+                </View>
+                {props.isLoading && (
+                    <View style={styles.spinner}>
+                        <ActivityIndicator
+                            color={props.type === 'Primary' ? Colors.primary[0] : Colors.secondary[0]}
+                            size="small"
+                        />
+                    </View>
+                )}
             </View>
-        </TouchableCmp>
+        </TouchableOpacity>
     );
 };
 
@@ -35,17 +47,23 @@ const CustomButton: React.FC<Props> = (props) => {
 interface Styles {
     button: ViewStyle;
     buttonText: TextStyle;
+    spinner: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
     button: {
+        flexDirection: 'row',
         borderRadius: 10,
+        justifyContent: 'center',
         padding: 12,
     },
     buttonText: {
         color: '#fff',
         textAlign: 'center',
         fontWeight: '700',
+    },
+    spinner: {
+        marginLeft: 3,
     },
 });
 

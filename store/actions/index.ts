@@ -1,1 +1,10 @@
-export { register, registerFail, registerStart, registerSuccess } from './auth';
+export {
+    register,
+    registerFail,
+    registerStart,
+    registerSuccess,
+    login,
+    loginStart,
+    loginFail,
+    loginSuccess,
+} from './auth';

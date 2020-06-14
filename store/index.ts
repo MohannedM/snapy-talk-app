@@ -1,5 +1,5 @@
 import { authSaga } from './sagas';
-import authReducer from './reducers/auth';
+import authReducer, { AuthStateType } from './reducers/auth';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -10,6 +10,10 @@ const rootReducer = combineReducers({
     auth: authReducer,
 });
 
+export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleware)));
+
 sagaMiddleware.run(authSaga);
 
-export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleware)));
+export interface AppState {
+    auth: AuthStateType;
+}

@@ -1,18 +1,109 @@
-import React from 'react';
-import { View, StyleSheet, Platform, TextInput, ViewStyle, Dimensions, Keyboard } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Platform, TextInput, ViewStyle, Dimensions, Keyboard, Text, TextStyle } from 'react-native';
 import Colors from '../constants/Colors';
 import Card from '../components/UI/Card';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import CustomButton from '../components/UI/CustomButton';
 import { LinearGradient } from 'expo-linear-gradient';
-import { RouteProp } from '@react-navigation/native';
+import { register } from '../store/actions';
+import { connect } from 'react-redux';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Dispatch } from 'redux';
+import { registerInputType, registerType } from '../store/types/auth.module';
+import { AppState } from '../store';
 
 interface Props {
     navigation: StackNavigationProp<any, any>;
+    onRegister: (authData: registerInputType) => registerType;
+    isLoading: boolean;
 }
 
 const Register: React.FC<Props> = (props) => {
+    const [inputState, setInputState] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        errors: {
+            firstName: {
+                touched: false,
+                message: '',
+                error: true,
+            },
+            lastName: {
+                touched: false,
+                message: '',
+                error: true,
+            },
+            email: {
+                touched: false,
+                message: '',
+                error: true,
+            },
+            password: {
+                touched: false,
+                message: '',
+                error: true,
+            },
+        },
+    });
+
+    const setUserInput = (
+        value: string,
+        inputName: 'firstName' | 'lastName' | 'email' | 'password',
+        isInputValid: boolean,
+        errorMessage: string,
+    ) => {
+        if (isInputValid) {
+            setInputState((prevState) => {
+                return {
+                    ...prevState,
+                    [inputName]: value,
+                    errors: { ...prevState.errors, [inputName]: { touched: true, message: '', error: false } },
+                };
+            });
+        } else {
+            setInputState((prevState) => {
+                return {
+                    ...prevState,
+                    [inputName]: value,
+                    errors: { ...prevState.errors, [inputName]: { touched: true, message: errorMessage, error: true } },
+                };
+            });
+        }
+    };
+
+    const setFirstName = (value: string) => {
+        const isValid = value.length >= 2 && value.length <= 14;
+        setUserInput(value, 'firstName', isValid, 'First name should be from 2 to 14 characters.');
+    };
+
+    const setLastName = (value: string) => {
+        const isValid = value.length >= 2 && value.length <= 14;
+        setUserInput(value, 'lastName', isValid, 'Last name should be from 2 to 14 characters.');
+    };
+
+    const setEmail = (value: string) => {
+        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const isValid = emailRegex.test(value);
+        setUserInput(value, 'email', isValid, 'Email is invalid.');
+    };
+
+    const setPassword = (value: string) => {
+        const isValid = value.length >= 6 && value.length <= 20;
+        setUserInput(value, 'password', isValid, 'Password should be from 6 to 20 characters.');
+    };
+    let isDisabled: boolean = true;
+    const errors = { ...inputState.errors };
+    let inputType: 'firstName' | 'lastName' | 'email' | 'password';
+    for (inputType in errors) {
+        if (errors[inputType].error) {
+            isDisabled = true;
+            break;
+        } else {
+            isDisabled = false;
+        }
+    }
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -27,34 +118,66 @@ const Register: React.FC<Props> = (props) => {
             />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.subContainer}>
                 <Card style={styles.card}>
-                    <TextInput style={styles.inputs} placeholder="First Name" maxLength={10} textContentType="name" />
                     <TextInput
                         style={styles.inputs}
-                        placeholder="Last Name"
-                        maxLength={10}
-                        textContentType="familyName"
+                        placeholder="First Name"
+                        maxLength={14}
+                        textContentType="name"
+                        value={inputState.firstName}
+                        onChangeText={setFirstName}
                     />
+                    {inputState.errors.firstName.error && inputState.errors.firstName.touched && (
+                        <Text style={styles.errorMessage}>{inputState.errors.firstName.message}</Text>
+                    )}
                     <TextInput
                         style={styles.inputs}
+                        value={inputState.lastName}
+                        placeholder="Last Name"
+                        maxLength={14}
+                        textContentType="familyName"
+                        onChangeText={setLastName}
+                    />
+                    {inputState.errors.lastName.error && inputState.errors.lastName.touched && (
+                        <Text style={styles.errorMessage}>{inputState.errors.lastName.message}</Text>
+                    )}
+                    <TextInput
+                        style={styles.inputs}
+                        value={inputState.email}
+                        onChangeText={setEmail}
                         placeholder="Email"
                         maxLength={30}
                         textContentType="emailAddress"
                     />
+                    {inputState.errors.email.error && inputState.errors.email.touched && (
+                        <Text style={styles.errorMessage}>{inputState.errors.email.message}</Text>
+                    )}
                     <TextInput
                         style={styles.inputs}
+                        value={inputState.password}
+                        onChangeText={setPassword}
                         placeholder="Password"
                         maxLength={14}
                         textContentType="password"
                         secureTextEntry
                     />
+                    {inputState.errors.password.error && inputState.errors.password.touched && (
+                        <Text style={styles.errorMessage}>{inputState.errors.password.message}</Text>
+                    )}
                     <View style={styles.actions}>
                         <View>
                             <CustomButton
                                 onPress={() => {
-                                    console.log('ay 7aga');
+                                    props.onRegister({
+                                        firstName: inputState.firstName,
+                                        lastName: inputState.lastName,
+                                        email: inputState.email,
+                                        password: inputState.password,
+                                    });
                                 }}
                                 type="Primary"
                                 style={styles.actionButtons}
+                                isDisabled={isDisabled}
+                                isLoading={props.isLoading}
                             >
                                 Register
                             </CustomButton>
@@ -85,6 +208,7 @@ interface Styles {
     actions: ViewStyle;
     actionButtons: ViewStyle;
     gradient: ViewStyle;
+    errorMessage: TextStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
@@ -136,6 +260,10 @@ const styles = StyleSheet.create<Styles>({
         top: 0,
         height: '100%',
     },
+    errorMessage: {
+        color: Colors.primary[2],
+        fontSize: 10,
+    },
 });
 
 export const registerScreenOptions = () => {
@@ -151,4 +279,16 @@ export const registerScreenOptions = () => {
     };
 };
 
-export default Register;
+const mapStateToProps = (state: AppState) => {
+    return {
+        isLoading: state.auth.loading,
+    };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+        onRegister: (authData: registerInputType) => dispatch(register(authData)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

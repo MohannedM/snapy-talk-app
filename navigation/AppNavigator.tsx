@@ -2,15 +2,28 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AuthNavigation from './AuthNavigation';
+import SnapyNavigator from './SnapyNavigator';
+import { connect } from 'react-redux';
+import { AppState } from '../store';
+
+interface IProps {
+    isAuth: boolean;
+}
 
 const Stack = createStackNavigator();
 
-const AppNavigator: React.FC = (props) => {
+const AppNavigator: React.FC<IProps> = (props) => {
     return (
         <NavigationContainer>
-            <AuthNavigation />
+            {!props.isAuth && <AuthNavigation />}
+            {props.isAuth && <SnapyNavigator />}
         </NavigationContainer>
     );
 };
 
-export default AppNavigator;
+const mapStateToProps = (state: AppState) => {
+    return {
+        isAuth: state.auth.token !== null,
+    };
+};
+export default connect(mapStateToProps)(AppNavigator);

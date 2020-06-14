@@ -1,8 +1,22 @@
-import { REGISTER, REGISTER_START, REGISTER_SUCCESS, REGISTER_FAIL } from '../actions/actionTypes';
+import {
+    REGISTER,
+    REGISTER_START,
+    REGISTER_SUCCESS,
+    REGISTER_FAIL,
+    LOGIN,
+    LOGIN_START,
+    LOGIN_SUCCESS,
+    LOGIN_FAIL,
+    AUTH_DISMISS_ERROR,
+} from '../actions/actionTypes';
 
 export interface registerInputType {
     firstName: string;
     lastName: string;
+    email: string;
+    password: string;
+}
+export interface loginInputType {
     email: string;
     password: string;
 }
@@ -34,4 +48,36 @@ export interface registerFailType {
     error: any; //Change it according to returned error type when you know it
 }
 
-export type authActionType = registerType | registerStartType | registerSuccessType | registerFailType;
+export interface loginType {
+    type: typeof LOGIN;
+    authData: loginInputType;
+}
+
+export interface loginStartType {
+    type: typeof LOGIN_START;
+}
+
+export interface loginSuccessType {
+    type: typeof LOGIN_SUCCESS;
+    userData: userData;
+}
+
+export interface loginFailType {
+    type: typeof LOGIN_FAIL;
+    error: any;
+}
+
+export interface authDismissErrorType {
+    type: typeof AUTH_DISMISS_ERROR;
+}
+
+export type authActionType =
+    | registerType
+    | registerStartType
+    | registerSuccessType
+    | registerFailType
+    | loginType
+    | loginFailType
+    | loginStartType
+    | loginSuccessType
+    | authDismissErrorType;
