@@ -1,13 +1,16 @@
 import {
     REGISTER,
-    REGISTER_FAIL,
-    REGISTER_SUCCESS,
-    REGISTER_START,
     LOGIN,
-    LOGIN_FAIL,
-    LOGIN_START,
-    LOGIN_SUCCESS,
+    AUTHENTICATE_FAIL,
+    AUTHENTICATE_SUCCESS,
+    AUTHENTICATE_START,
     AUTH_DISMISS_ERROR,
+    CHECK_AUTH_STATE,
+    EMPTY_AUTH_STATE,
+    LOGOUT,
+    LOGOUT_START,
+    LOGOUT_END,
+    SET_AUTH_STATE,
 } from './actionTypes';
 import * as authTypes from '../types/auth.module';
 
@@ -18,26 +21,6 @@ export const register: (authData: authTypes.registerInputType) => authTypes.regi
     };
 };
 
-export const registerStart: () => authTypes.registerStartType = () => {
-    return {
-        type: REGISTER_START,
-    };
-};
-
-export const registerSuccess: (userData: authTypes.userData) => authTypes.registerSuccessType = (userData) => {
-    return {
-        type: REGISTER_SUCCESS,
-        userData,
-    };
-};
-
-export const registerFail: (error: any) => authTypes.registerFailType = (error) => {
-    return {
-        type: REGISTER_FAIL,
-        error,
-    };
-};
-
 export const login: (authData: authTypes.loginInputType) => authTypes.loginType = (authData) => {
     return {
         type: LOGIN,
@@ -45,22 +28,22 @@ export const login: (authData: authTypes.loginInputType) => authTypes.loginType 
     };
 };
 
-export const loginStart: () => authTypes.loginStartType = () => {
+export const authenticateStart: () => authTypes.authenticateStartType = () => {
     return {
-        type: LOGIN_START,
+        type: AUTHENTICATE_START,
     };
 };
 
-export const loginSuccess: (userData: authTypes.userData) => authTypes.loginSuccessType = (userData) => {
+export const authenticateSuccess: (userData: authTypes.userData) => authTypes.authenticateSuccessType = (userData) => {
     return {
-        type: LOGIN_SUCCESS,
+        type: AUTHENTICATE_SUCCESS,
         userData,
     };
 };
 
-export const loginFail: (error: any) => authTypes.loginFailType = (error) => {
+export const authenticateFail: (error: any) => authTypes.authenticateFailType = (error) => {
     return {
-        type: LOGIN_FAIL,
+        type: AUTHENTICATE_FAIL,
         error,
     };
 };
@@ -68,5 +51,41 @@ export const loginFail: (error: any) => authTypes.loginFailType = (error) => {
 export const authDismissError: () => authTypes.authDismissErrorType = () => {
     return {
         type: AUTH_DISMISS_ERROR,
+    };
+};
+
+export const setAuthState: () => authTypes.setAuthStateType = () => {
+    return {
+        type: SET_AUTH_STATE,
+    };
+};
+
+export const checkAuthState: () => authTypes.checkAuthStateType = () => {
+    return {
+        type: CHECK_AUTH_STATE,
+    };
+};
+
+export const emptyAuthState: () => authTypes.emptyAuthStateType = () => {
+    return {
+        type: EMPTY_AUTH_STATE,
+    };
+};
+
+export const logout: () => authTypes.logoutType = () => {
+    return {
+        type: LOGOUT,
+    };
+};
+
+export const logoutStart: () => authTypes.logoutStartType = () => {
+    return {
+        type: LOGOUT_START,
+    };
+};
+
+export const logoutEnd: () => authTypes.logoutEndType = () => {
+    return {
+        type: LOGOUT_END,
     };
 };

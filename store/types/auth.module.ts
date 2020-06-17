@@ -1,13 +1,16 @@
 import {
     REGISTER,
-    REGISTER_START,
-    REGISTER_SUCCESS,
-    REGISTER_FAIL,
     LOGIN,
-    LOGIN_START,
-    LOGIN_SUCCESS,
-    LOGIN_FAIL,
+    AUTHENTICATE_START,
+    AUTHENTICATE_SUCCESS,
+    AUTHENTICATE_FAIL,
     AUTH_DISMISS_ERROR,
+    CHECK_AUTH_STATE,
+    EMPTY_AUTH_STATE,
+    LOGOUT,
+    LOGOUT_START,
+    LOGOUT_END,
+    SET_AUTH_STATE,
 } from '../actions/actionTypes';
 
 export interface registerInputType {
@@ -34,50 +37,63 @@ export interface registerType {
     authData: registerInputType;
 }
 
-export interface registerStartType {
-    type: typeof REGISTER_START;
-}
-
-export interface registerSuccessType {
-    type: typeof REGISTER_SUCCESS;
-    userData: userData;
-}
-
-export interface registerFailType {
-    type: typeof REGISTER_FAIL;
-    error: any; //Change it according to returned error type when you know it
-}
-
 export interface loginType {
     type: typeof LOGIN;
     authData: loginInputType;
 }
 
-export interface loginStartType {
-    type: typeof LOGIN_START;
+export interface authenticateStartType {
+    type: typeof AUTHENTICATE_START;
 }
 
-export interface loginSuccessType {
-    type: typeof LOGIN_SUCCESS;
+export interface authenticateSuccessType {
+    type: typeof AUTHENTICATE_SUCCESS;
     userData: userData;
 }
 
-export interface loginFailType {
-    type: typeof LOGIN_FAIL;
-    error: any;
+export interface authenticateFailType {
+    type: typeof AUTHENTICATE_FAIL;
+    error: any; //Change it according to returned error type when you know it
 }
 
 export interface authDismissErrorType {
     type: typeof AUTH_DISMISS_ERROR;
 }
 
+export interface checkAuthStateType {
+    type: typeof CHECK_AUTH_STATE;
+}
+
+export interface emptyAuthStateType {
+    type: typeof EMPTY_AUTH_STATE;
+}
+
+export interface setAuthStateType {
+    type: typeof SET_AUTH_STATE;
+}
+
+export interface logoutType {
+    type: typeof LOGOUT;
+}
+
+export interface logoutStartType {
+    type: typeof LOGOUT_START;
+}
+
+export interface logoutEndType {
+    type: typeof LOGOUT_END;
+}
+
 export type authActionType =
     | registerType
-    | registerStartType
-    | registerSuccessType
-    | registerFailType
     | loginType
-    | loginFailType
-    | loginStartType
-    | loginSuccessType
-    | authDismissErrorType;
+    | authenticateStartType
+    | authenticateSuccessType
+    | authenticateFailType
+    | authDismissErrorType
+    | checkAuthStateType
+    | emptyAuthStateType
+    | logoutType
+    | logoutStartType
+    | logoutEndType
+    | setAuthStateType;

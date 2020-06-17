@@ -1,12 +1,19 @@
-import { put } from 'redux-saga/effects';
-import { registerStart, registerSuccess, registerFail, loginStart, loginFail, loginSuccess } from '../actions';
-import { registerType, loginType } from '../types/auth.module';
+import { AsyncStorage } from 'react-native';
+import { put, delay } from 'redux-saga/effects';
+import {
+    authenticateStart,
+    authenticateSuccess,
+    authenticateFail,
+    emptyAuthState,
+    logoutStart,
+    logoutEnd,
+} from '../actions';
+import { registerType, loginType, checkAuthStateType, userData, logoutType } from '../types/auth.module';
 import axios from 'axios';
-
-interface resultData {}
+import { LOCAL_HOST_URL } from '../../env';
 
 export function* registerSaga(action: registerType) {
-    yield put(registerStart());
+    yield put(authenticateStart());
     try {
         const graphqlQuery = {
             query: `
@@ -21,20 +28,20 @@ export function* registerSaga(action: registerType) {
                 }
             `,
         };
-        const result = yield axios.post('http://e0d265767301.ngrok.io/graphql', JSON.stringify(graphqlQuery), {
+        const result = yield axios.post(`${LOCAL_HOST_URL}/graphql`, JSON.stringify(graphqlQuery), {
             headers: {
                 'Content-Type': 'application/json',
             },
         });
-        yield put(registerSuccess(result.data.data.register));
+        yield put(authenticateSuccess(result.data.data.register));
     } catch (err) {
         console.log(err);
-        yield put(registerFail(err));
+        yield put(authenticateFail(err));
     }
 }
 
 export function* loginSaga(action: loginType) {
-    yield put(loginStart());
+    yield put(authenticateStart());
     try {
         const graphqlQuery = {
             query: `
@@ -49,14 +56,30 @@ export function* loginSaga(action: loginType) {
                 }
             `,
         };
-        const result = yield axios.post('http://e0d265767301.ngrok.io/graphql', graphqlQuery, {
+        const result = yield axios.post(`${LOCAL_HOST_URL}/graphql`, graphqlQuery, {
             headers: {
                 'Content-Type': 'application/json',
             },
         });
-        yield put(loginSuccess(result.data.data.login));
+        yield put(authenticateSuccess(result.data.data.login));
     } catch (err) {
         console.log(err);
-        yield put(loginFail(err));
+        yield put(authenticateFail(err));
     }
+}
+
+export function* checkAuthStateSaga(action: checkAuthStateType) {
+    yield delay(1000);
+    const userData = yield AsyncStorage.getItem('userData');
+    if (userData) {
+        yield put(authenticateSuccess(JSON.parse(userData)));
+    } else {
+        yield put(emptyAuthState());
+    }
+}
+
+export function* logoutSaga(action: logoutType) {
+    yield put(logoutStart());
+    yield AsyncStorage.removeItem('userData');
+    yield put(logoutEnd());
 }
