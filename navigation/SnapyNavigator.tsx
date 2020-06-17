@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import Home from '../screens/Home';
+import Home, { homeScreenOptions } from '../screens/Home';
 import { AppState } from '../store';
 import { setAuthState } from '../store/actions';
 import { useDispatch, connect } from 'react-redux';
@@ -24,7 +24,7 @@ const SnapyNavigator: React.FC<Props> = (props) => {
     }, [isAuthSet]);
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Home" component={Home} options={homeScreenOptions} />
         </Stack.Navigator>
     );
 };
