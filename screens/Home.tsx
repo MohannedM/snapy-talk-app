@@ -1,17 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button, AsyncStorage, Platform, Image, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
-import { logout } from '../store/actions';
-import { logoutType } from '../store/types/auth.module';
-import { Dispatch } from 'redux';
 import Colors from '../constants/Colors';
-import Card from '../components/UI/Card';
-import { AntDesign, Fontisto } from '@expo/vector-icons';
 import BlogPost from '../components/MainElements/BlogPost';
+import CustomHeaderButton from '../components/UI/CustomHeaderButton';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-interface Props {
-    onLogout: () => logoutType;
-}
+interface Props {}
 
 const Home: React.FC<Props> = (props) => {
     return (
@@ -28,15 +23,6 @@ const Home: React.FC<Props> = (props) => {
                 isLiked
             />
             <Text>HELLO, THIS IS HOME</Text>
-
-            <Button
-                title="Logout"
-                onPress={() => {
-                    AsyncStorage.removeItem('userData', () => {
-                        props.onLogout();
-                    });
-                }}
-            />
         </View>
     );
 };
@@ -48,13 +34,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-    return {
-        onLogout: () => dispatch(logout()),
-    };
-};
-
-export const homeScreenOptions = () => {
+export const homeScreenOptions = (navData: any) => {
     return {
         title: 'Snapy News Feed',
         headerStyle: {
@@ -64,7 +44,18 @@ export const homeScreenOptions = () => {
         headerTitleStyle: {
             fontWeight: 'bold',
         },
+        headerLeft: () => (
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item
+                    title="Cart"
+                    iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+                    onPress={() => {
+                        navData.navigation.toggleDrawer();
+                    }}
+                />
+            </HeaderButtons>
+        ),
     };
 };
 
-export default connect(null, mapDispatchToProps)(Home);
+export default connect(null, null)(Home);
