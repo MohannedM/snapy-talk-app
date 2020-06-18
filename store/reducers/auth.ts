@@ -54,6 +54,7 @@ const authReducer: (state: AuthStateType, action: authActionType) => AuthStateTy
         case AUTHENTICATE_FAIL:
             return {
                 ...state,
+                error: action.error,
                 loading: false,
                 authCheckLoading: false,
             };

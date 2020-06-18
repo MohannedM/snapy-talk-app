@@ -33,9 +33,12 @@ export function* registerSaga(action: registerType) {
                 'Content-Type': 'application/json',
             },
         });
+        if (!result.data.data.register) {
+            yield put(authenticateFail(result.data.errors[0].data.data[0].message));
+            return;
+        }
         yield put(authenticateSuccess(result.data.data.register));
     } catch (err) {
-        console.log(err);
         yield put(authenticateFail(err));
     }
 }
@@ -61,9 +64,12 @@ export function* loginSaga(action: loginType) {
                 'Content-Type': 'application/json',
             },
         });
+        if (!result.data.data.login) {
+            yield put(authenticateFail(result.data.errors[0].data.data[0].message));
+            return;
+        }
         yield put(authenticateSuccess(result.data.data.login));
     } catch (err) {
-        console.log(err);
         yield put(authenticateFail(err));
     }
 }

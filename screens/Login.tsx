@@ -1,5 +1,17 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Platform, TextInput, ViewStyle, Dimensions, Keyboard, TextStyle, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+    View,
+    StyleSheet,
+    Platform,
+    TextInput,
+    ViewStyle,
+    Dimensions,
+    Keyboard,
+    TextStyle,
+    Text,
+    Alert,
+    Button,
+} from 'react-native';
 import Colors from '../constants/Colors';
 import Card from '../components/UI/Card';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -9,14 +21,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { login } from '../store/actions';
-import { loginInputType, loginType } from '../store/types/auth.module';
+import { login, authDismissError } from '../store/actions';
+import { loginInputType, loginType, authDismissErrorType } from '../store/types/auth.module';
 import { AppState } from '../store';
 
 interface Props {
     navigation: StackNavigationProp<any, any>;
     onLogin: (authData: loginInputType) => loginType;
+    onDismissError: () => authDismissErrorType;
     isLoading: boolean;
+    error: any | null;
 }
 
 const Login: React.FC<Props> = (props) => {
@@ -84,6 +98,19 @@ const Login: React.FC<Props> = (props) => {
             isDisabled = false;
         }
     }
+    const { error } = props;
+    useEffect(() => {
+        if (error) {
+            Alert.alert('An Error Occurred!', error, [
+                {
+                    text: 'Okay',
+                    onPress: () => {
+                        props.onDismissError();
+                    },
+                },
+            ]);
+        }
+    }, [error]);
 
     return (
         <View style={styles.container}>
@@ -97,6 +124,7 @@ const Login: React.FC<Props> = (props) => {
                         textContentType="emailAddress"
                         value={inputState.email}
                         onChangeText={setEmail}
+                        autoCapitalize="none"
                     />
                     {inputState.errors.email.error && inputState.errors.email.touched && (
                         <Text style={styles.errorMessage}>{inputState.errors.email.message}</Text>
@@ -227,12 +255,14 @@ export const loginScreenOptions = () => {
 const mapStateToProps = (state: AppState) => {
     return {
         isLoading: state.auth.loading,
+        error: state.auth.error,
     };
 };
 
 export const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         onLogin: (authData: loginInputType) => dispatch(login(authData)),
+        onDismissError: () => dispatch(authDismissError()),
     };
 };
 

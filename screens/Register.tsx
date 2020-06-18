@@ -1,21 +1,34 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Platform, TextInput, ViewStyle, Dimensions, Keyboard, Text, TextStyle } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+    View,
+    StyleSheet,
+    Platform,
+    TextInput,
+    ViewStyle,
+    Dimensions,
+    Keyboard,
+    Text,
+    TextStyle,
+    Alert,
+} from 'react-native';
 import Colors from '../constants/Colors';
 import Card from '../components/UI/Card';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import CustomButton from '../components/UI/CustomButton';
 import { LinearGradient } from 'expo-linear-gradient';
-import { register } from '../store/actions';
+import { register, authDismissError } from '../store/actions';
 import { connect } from 'react-redux';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Dispatch } from 'redux';
-import { registerInputType, registerType } from '../store/types/auth.module';
+import { registerInputType, registerType, authDismissErrorType } from '../store/types/auth.module';
 import { AppState } from '../store';
 
 interface Props {
     navigation: StackNavigationProp<any, any>;
     onRegister: (authData: registerInputType) => registerType;
+    onDismissError: () => authDismissErrorType;
     isLoading: boolean;
+    error: any | null;
 }
 
 const Register: React.FC<Props> = (props) => {
@@ -104,6 +117,19 @@ const Register: React.FC<Props> = (props) => {
             isDisabled = false;
         }
     }
+    const { error } = props;
+    useEffect(() => {
+        if (error) {
+            Alert.alert('An Error Occurred!', error, [
+                {
+                    text: 'Okay',
+                    onPress: () => {
+                        props.onDismissError();
+                    },
+                },
+            ]);
+        }
+    }, [error]);
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -147,6 +173,7 @@ const Register: React.FC<Props> = (props) => {
                         placeholder="Email"
                         maxLength={30}
                         textContentType="emailAddress"
+                        autoCapitalize="none"
                     />
                     {inputState.errors.email.error && inputState.errors.email.touched && (
                         <Text style={styles.errorMessage}>{inputState.errors.email.message}</Text>
@@ -282,12 +309,14 @@ export const registerScreenOptions = () => {
 const mapStateToProps = (state: AppState) => {
     return {
         isLoading: state.auth.loading,
+        error: state.auth.error,
     };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         onRegister: (authData: registerInputType) => dispatch(register(authData)),
+        onDismissError: () => dispatch(authDismissError()),
     };
 };
 
