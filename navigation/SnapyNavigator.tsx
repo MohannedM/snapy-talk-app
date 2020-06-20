@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import Home, { homeScreenOptions } from '../screens/Home';
-import EditPost from '../screens/EditPost';
-import { createStackNavigator } from '@react-navigation/stack';
-
-import PostDetails from '../screens/PostDetails';
+import Home from '../screens/Feed';
+import OwnerPostsStack from './OwnerPostsStack';
+import FeedStack from './FeedStack';
 import { AppState } from '../store';
 import { setAuthState, logout } from '../store/actions';
 import { useDispatch, connect } from 'react-redux';
@@ -13,8 +11,6 @@ import { createDrawerNavigator, DrawerItem, DrawerItemList } from '@react-naviga
 import Colors from '../constants/Colors';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 const Drawer = createDrawerNavigator();
-
-const Stack = createStackNavigator();
 
 interface Props {
     isAuthSet: boolean;
@@ -31,11 +27,7 @@ const SnapyNavigator: React.FC<Props> = (props) => {
             });
         }
     }, [isAuthSet]);
-    const HomeStack = () => (
-        <Stack.Navigator>
-            <Stack.Screen name="Home" component={Home} options={homeScreenOptions} />
-        </Stack.Navigator>
-    );
+
     return (
         <Drawer.Navigator
             initialRouteName="Home"
@@ -60,15 +52,15 @@ const SnapyNavigator: React.FC<Props> = (props) => {
             drawerContentOptions={{ activeTintColor: Colors.primary[1] }}
         >
             <Drawer.Screen
-                name="Home"
-                component={HomeStack}
+                name="News Feed"
+                component={FeedStack}
                 options={{
                     drawerIcon: (props) => <Entypo name="news" size={23} color={props.color} />,
                 }}
             />
             <Drawer.Screen
-                name="Add a snap"
-                component={EditPost}
+                name="My Stories"
+                component={OwnerPostsStack}
                 options={{
                     drawerIcon: (props) => (
                         <Ionicons

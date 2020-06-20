@@ -9,12 +9,13 @@ interface Props {
     type: 'Primary' | 'Secondary';
     isDisabled?: boolean;
     isLoading?: boolean;
+    strength?: 0 | 1 | 2;
 }
 
 const CustomButton: React.FC<Props> = (props) => {
     const bgColor = {
-        Primary: props.isDisabled ? Colors.primary[0] : Colors.primary[1],
-        Secondary: props.isDisabled ? Colors.secondary[0] : Colors.secondary[1],
+        Primary: props.isDisabled ? Colors.primary[0] : Colors.primary[props.strength ? props.strength : 1],
+        Secondary: props.isDisabled ? Colors.secondary[0] : Colors.secondary[props.strength ? props.strength : 1],
     };
     return (
         <TouchableOpacity activeOpacity={0.6} onPress={props.onPress} disabled={props.isDisabled}>

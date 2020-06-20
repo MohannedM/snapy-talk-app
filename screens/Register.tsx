@@ -22,6 +22,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Dispatch } from 'redux';
 import { registerInputType, registerType, authDismissErrorType } from '../store/types/auth.module';
 import { AppState } from '../store';
+import RuleInputText from '../components/UI/RuleInputText';
 
 interface Props {
     navigation: StackNavigationProp<any, any>;
@@ -144,30 +145,29 @@ const Register: React.FC<Props> = (props) => {
             />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.subContainer}>
                 <Card style={styles.card}>
-                    <TextInput
-                        style={styles.inputs}
+                    <RuleInputText
+                        hasError={inputState.errors.firstName.error && inputState.errors.firstName.touched}
+                        errorMessage={inputState.errors.firstName.message}
                         placeholder="First Name"
                         maxLength={14}
                         textContentType="name"
                         value={inputState.firstName}
                         onChangeText={setFirstName}
                     />
-                    {inputState.errors.firstName.error && inputState.errors.firstName.touched && (
-                        <Text style={styles.errorMessage}>{inputState.errors.firstName.message}</Text>
-                    )}
-                    <TextInput
-                        style={styles.inputs}
+
+                    <RuleInputText
+                        hasError={inputState.errors.lastName.error && inputState.errors.lastName.touched}
+                        errorMessage={inputState.errors.lastName.message}
                         value={inputState.lastName}
                         placeholder="Last Name"
                         maxLength={14}
                         textContentType="familyName"
                         onChangeText={setLastName}
                     />
-                    {inputState.errors.lastName.error && inputState.errors.lastName.touched && (
-                        <Text style={styles.errorMessage}>{inputState.errors.lastName.message}</Text>
-                    )}
-                    <TextInput
-                        style={styles.inputs}
+
+                    <RuleInputText
+                        hasError={inputState.errors.email.error && inputState.errors.email.touched}
+                        errorMessage={inputState.errors.email.message}
                         value={inputState.email}
                         onChangeText={setEmail}
                         placeholder="Email"
@@ -175,11 +175,10 @@ const Register: React.FC<Props> = (props) => {
                         textContentType="emailAddress"
                         autoCapitalize="none"
                     />
-                    {inputState.errors.email.error && inputState.errors.email.touched && (
-                        <Text style={styles.errorMessage}>{inputState.errors.email.message}</Text>
-                    )}
-                    <TextInput
-                        style={styles.inputs}
+
+                    <RuleInputText
+                        hasError={inputState.errors.password.error && inputState.errors.password.touched}
+                        errorMessage={inputState.errors.password.message}
                         value={inputState.password}
                         onChangeText={setPassword}
                         placeholder="Password"
@@ -187,9 +186,7 @@ const Register: React.FC<Props> = (props) => {
                         textContentType="password"
                         secureTextEntry
                     />
-                    {inputState.errors.password.error && inputState.errors.password.touched && (
-                        <Text style={styles.errorMessage}>{inputState.errors.password.message}</Text>
-                    )}
+
                     <View style={styles.actions}>
                         <View>
                             <CustomButton
@@ -231,7 +228,6 @@ interface Styles {
     container: ViewStyle;
     subContainer: ViewStyle;
     card: ViewStyle;
-    inputs: ViewStyle;
     actions: ViewStyle;
     actionButtons: ViewStyle;
     gradient: ViewStyle;
@@ -255,21 +251,6 @@ const styles = StyleSheet.create<Styles>({
         minWidth: '75%',
         marginTop: Dimensions.get('window').height / 10,
         padding: 20,
-    },
-    inputs: {
-        padding: 10,
-        margin: 10,
-        borderRadius: 10,
-        borderColor: '#eee',
-        borderWidth: 1,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.18,
-        shadowRadius: 1.0,
-        elevation: 1,
     },
     actions: {
         flexDirection: 'row',

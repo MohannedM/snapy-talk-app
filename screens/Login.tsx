@@ -10,14 +10,13 @@ import {
     TextStyle,
     Text,
     Alert,
-    Button,
 } from 'react-native';
 import Colors from '../constants/Colors';
 import Card from '../components/UI/Card';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import CustomButton from '../components/UI/CustomButton';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import RuleInputText from '../components/UI/RuleInputText';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -53,7 +52,7 @@ const Login: React.FC<Props> = (props) => {
 
     const setUserInput = (
         value: string,
-        inputName: 'firstName' | 'lastName' | 'email' | 'password',
+        inputName: 'email' | 'password',
         isInputValid: boolean,
         errorMessage: string,
     ) => {
@@ -117,8 +116,9 @@ const Login: React.FC<Props> = (props) => {
             <LinearGradient colors={[Colors.primary[0], Colors.secondary[0]]} style={styles.gradient} />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.subContainer}>
                 <Card style={styles.card}>
-                    <TextInput
-                        style={styles.inputs}
+                    <RuleInputText
+                        errorMessage={inputState.errors.email.message}
+                        hasError={inputState.errors.email.error && inputState.errors.email.touched}
                         placeholder="Email"
                         maxLength={30}
                         textContentType="emailAddress"
@@ -126,21 +126,18 @@ const Login: React.FC<Props> = (props) => {
                         onChangeText={setEmail}
                         autoCapitalize="none"
                     />
-                    {inputState.errors.email.error && inputState.errors.email.touched && (
-                        <Text style={styles.errorMessage}>{inputState.errors.email.message}</Text>
-                    )}
-                    <TextInput
-                        style={styles.inputs}
+
+                    <RuleInputText
                         placeholder="Password"
                         maxLength={14}
                         textContentType="password"
                         secureTextEntry
                         value={inputState.password}
                         onChangeText={setPassword}
+                        errorMessage={inputState.errors.password.message}
+                        hasError={inputState.errors.password.error && inputState.errors.password.touched}
                     />
-                    {inputState.errors.password.error && inputState.errors.password.touched && (
-                        <Text style={styles.errorMessage}>{inputState.errors.password.message}</Text>
-                    )}
+
                     <View style={styles.actions}>
                         <View>
                             <CustomButton
@@ -177,7 +174,6 @@ interface Styles {
     container: ViewStyle;
     subContainer: ViewStyle;
     card: ViewStyle;
-    inputs: ViewStyle;
     actions: ViewStyle;
     actionButtons: ViewStyle;
     gradient: ViewStyle;
@@ -201,21 +197,6 @@ const styles = StyleSheet.create<Styles>({
         minWidth: '75%',
         marginTop: Dimensions.get('window').height / 10,
         padding: 20,
-    },
-    inputs: {
-        padding: 10,
-        margin: 10,
-        borderRadius: 10,
-        borderColor: '#eee',
-        borderWidth: 1,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.18,
-        shadowRadius: 1.0,
-        elevation: 1,
     },
     actions: {
         flexDirection: 'row',

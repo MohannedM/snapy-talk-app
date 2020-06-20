@@ -21,6 +21,7 @@ interface Props {
     author: string;
     imageUrl: string;
     isLiked?: boolean;
+    onViewDetails: () => void;
 }
 
 const BlogPost: React.FC<Props> = (props) => {
@@ -38,7 +39,14 @@ const BlogPost: React.FC<Props> = (props) => {
             </View>
             <View style={styles.actions}>
                 <AntDesign name={props.isLiked ? 'like1' : 'like2'} size={21} color={Colors.secondary[1]} />
-                <Fontisto name="preview" size={21} color={Colors.primary[1]} />
+                <Fontisto
+                    name="preview"
+                    size={21}
+                    color={Colors.primary[1]}
+                    onPress={() => {
+                        props.onViewDetails();
+                    }}
+                />
             </View>
         </Card>
     );
