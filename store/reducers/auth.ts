@@ -12,7 +12,7 @@ import {
 
 export interface AuthStateType {
     _id: string | null;
-    token: string | null;
+    token?: string | null;
     email: string | null;
     firstName: string | null;
     lastName: string | null;
@@ -80,6 +80,7 @@ const authReducer: (state: AuthStateType, action: authActionType) => AuthStateTy
             };
         case LOGOUT_END:
             return {
+                ...state,
                 _id: null,
                 token: null,
                 email: null,

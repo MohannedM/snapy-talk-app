@@ -1,12 +1,16 @@
 import React from 'react';
 import CustomHeaderButton from '../components/UI/CustomHeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import PostInput from '../screens/PostInput';
 import { Platform } from 'react-native';
 import Colors from '../constants/Colors';
 import Feed from '../screens/Feed';
 import PostDetails from '../screens/PostDetails';
+import { connect } from 'react-redux';
+import { postInputType, createPostType } from '../store/types/posts.module';
+import { Dispatch } from 'redux';
+import { createPost } from '../store/actions';
 
 const Stack = createStackNavigator();
 
@@ -52,20 +56,10 @@ const ownerPostsScreenOptions = (navData: any) => {
 };
 
 const editPostScreenOptions = (navData: any) => {
+    const params = navData.route.params ? navData.route.params : {};
     return {
-        title: 'Add a Snap',
+        title: params.productId ? 'Edit Snap' : 'Add a Snap',
         ...genericScreenOptions(navData),
-        headerRight: () => (
-            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                <Item
-                    title="check"
-                    iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-                    onPress={() => {
-                        console.log('add');
-                    }}
-                />
-            </HeaderButtons>
-        ),
     };
 };
 

@@ -12,3 +12,12 @@ export {
     logoutStart,
     setAuthState,
 } from './auth';
+
+export {
+    createPost,
+    createPostFail,
+    createPostStart,
+    createPostSuccess,
+    postsDismissError,
+    disableGoBack,
+} from './posts';

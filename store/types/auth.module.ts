@@ -29,7 +29,7 @@ export interface userData {
     firstName: string;
     lastName: string;
     email: string;
-    token: string;
+    token?: string;
 }
 
 export interface registerType {

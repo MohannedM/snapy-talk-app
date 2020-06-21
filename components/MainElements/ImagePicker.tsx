@@ -41,11 +41,11 @@ const ImagePicker: React.FC<IProps> = (props) => {
             return;
         }
         const imagePicked = await ImgPicker.launchCameraAsync();
-        if (imagePicked.cancelled) {
+        if (imagePicked.cancelled && image === '') {
             props.onSetImage('', imagePicked.cancelled);
-        } else {
+        } else if ((imagePicked as { uri: string }).uri) {
+            props.onSetImage((imagePicked as { uri: string }).uri, false);
             setImage((imagePicked as { uri: string }).uri);
-            props.onSetImage((imagePicked as { uri: string }).uri, imagePicked.cancelled);
         }
     };
     return (
