@@ -4,15 +4,17 @@ import { connect } from 'react-redux';
 import BlogPost from '../components/MainElements/BlogPost';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Dispatch } from 'redux';
+import { useNavigationState } from '@react-navigation/native';
+import { DrawerScreenProps } from '@react-navigation/drawer';
+import { AppState } from '../store';
+import { getAllPosts, getUserPosts } from '../store/actions';
+import { getAllPostsType, getUserPostsType } from '../store/types/posts.module';
 
 interface Props {
     navigation: StackNavigationProp<any, any>;
 }
 
 const Home: React.FC<Props> = (props) => {
-    useEffect(() => {
-        props.navigation.setParams({ from: 'Feed' });
-    }, []);
     return (
         <View style={styles.container}>
             <BlogPost
@@ -41,9 +43,16 @@ const styles = StyleSheet.create({
     },
 });
 
+// const mapStateToProps = (state: AppState) => {
+//     return {
+//         token: state.auth.token,
+//     };
+// };
+
 // const mapDispatchToProps = (dispatch: Dispatch) => {
 //     return {
-//         onReachStories: () => dispatch(reachedMyStories()),
+//         onGetAllPosts: (token?: string | null) => dispatch(getAllPosts(token)),
+//         onGetUserPosts: (token?: string | null) => dispatch(getUserPosts(token)),
 //     };
 // };
 

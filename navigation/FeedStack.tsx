@@ -7,6 +7,10 @@ import { Platform } from 'react-native';
 import Colors from '../constants/Colors';
 import PostDetails from '../screens/PostDetails';
 import { detailsScreenOptions } from './OwnerPostsStack';
+import { connect } from 'react-redux';
+import { postInputType, createPostType } from '../store/types/posts.module';
+import { Dispatch } from 'redux';
+import { getAllPosts } from '../store/actions';
 
 const Stack = createStackNavigator();
 

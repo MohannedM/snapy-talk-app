@@ -1,6 +1,15 @@
 import { put, delay } from 'redux-saga/effects';
-import { createPostType } from '../types/posts.module';
-import { createPostStart, createPostFail, createPostSuccess, disableGoBack } from '../actions';
+import { createPostType, getAllPostsType, getUserPostsType } from '../types/posts.module';
+import {
+    createPostStart,
+    createPostFail,
+    createPostSuccess,
+    disableGoBack,
+    getAllPostsStart,
+    getAllPostsFail,
+    getUserPostsStart,
+    getUserPostsFail,
+} from '../actions';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../env';
 
@@ -57,5 +66,74 @@ export function* createPostSaga(action: createPostType) {
     } catch (err) {
         console.log(err);
         yield put(createPostFail(err));
+    }
+}
+
+export function* getAllPostsSaga(action: getAllPostsType) {
+    console.log('GET ALL POSTS HAVE BEEN CALLED');
+    yield put(getAllPostsStart());
+    try {
+        const graphqlQuery = {
+            query: `{
+                getAllPosts{
+                    _id
+                    title
+                    description
+                    imageUrl
+                    createdAt
+                    updatedAt
+                    user{
+                        _id
+                        firstName
+                        lastName
+                    }
+                    likers{
+                        _id
+                    }
+                }
+            }`,
+        };
+
+        const result = yield axios.post(`${LOCAL_HOST_URL}/graphql`, graphqlQuery, {
+            headers: {
+                Authorization: `Bearer ${action.token}`,
+            },
+        });
+        yield put(result.data.data.getAllPosts);
+    } catch (error) {
+        console.log(error);
+        yield put(getAllPostsFail(error));
+    }
+}
+
+export function* getUserPostsSaga(action: getUserPostsType) {
+    console.log('GET USER POSTS HAVE BEEN CALLED');
+    yield put(getUserPostsStart());
+    try {
+        const graphqlQuery = {
+            query: `{
+                getUserPosts{
+                    _id
+                    title
+                    description
+                    imageUrl
+                    createdAt
+                    updatedAt
+                    likers{
+                        _id
+                    }
+                }
+            }`,
+        };
+
+        const result = yield axios.post(`${LOCAL_HOST_URL}/graphql`, graphqlQuery, {
+            headers: {
+                Authorization: `Bearer ${action.token}`,
+            },
+        });
+        yield put(result.data.data.getUserPosts);
+    } catch (error) {
+        console.log(error);
+        yield put(getUserPostsFail(error));
     }
 }

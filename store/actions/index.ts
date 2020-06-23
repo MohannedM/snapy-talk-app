@@ -20,4 +20,12 @@ export {
     createPostSuccess,
     postsDismissError,
     disableGoBack,
+    getAllPosts,
+    getAllPostsFail,
+    getAllPostsStart,
+    getAllPostsSuccess,
+    getUserPosts,
+    getUserPostsFail,
+    getUserPostsStart,
+    getUserPostsSuccess,
 } from './posts';

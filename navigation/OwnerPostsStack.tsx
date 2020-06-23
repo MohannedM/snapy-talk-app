@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CustomHeaderButton from '../components/UI/CustomHeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
@@ -8,9 +8,10 @@ import Colors from '../constants/Colors';
 import Feed from '../screens/Feed';
 import PostDetails from '../screens/PostDetails';
 import { connect } from 'react-redux';
-import { postInputType, createPostType } from '../store/types/posts.module';
+import { postInputType, createPostType, getUserPostsType } from '../store/types/posts.module';
 import { Dispatch } from 'redux';
-import { createPost } from '../store/actions';
+import { createPost, getUserPosts } from '../store/actions';
+import { AppState } from '../store';
 
 const Stack = createStackNavigator();
 
@@ -71,13 +72,35 @@ export const detailsScreenOptions = (navData: any) => {
     };
 };
 
-const OwnerPostsStack: React.FC = (props) => (
-    <Stack.Navigator>
-        <Stack.Screen name="OwnerPosts" component={Feed} options={ownerPostsScreenOptions} />
-        <Stack.Screen name="AddPost" component={PostInput} options={editPostScreenOptions} />
-        <Stack.Screen name="Details" component={PostDetails} options={detailsScreenOptions} />
-        <Stack.Screen name="EditPost" component={PostInput} options={editPostScreenOptions} />
-    </Stack.Navigator>
-);
+interface IProps {
+    token?: string | null;
+    onGetUserPosts: (token?: string | null) => getUserPostsType;
+}
 
-export default OwnerPostsStack;
+const OwnerPostsStack: React.FC<IProps> = (props) => {
+    useEffect(() => {
+        props.onGetUserPosts(props.token);
+    }, []);
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="OwnerPosts" component={Feed} options={ownerPostsScreenOptions} />
+            <Stack.Screen name="AddPost" component={PostInput} options={editPostScreenOptions} />
+            <Stack.Screen name="Details" component={PostDetails} options={detailsScreenOptions} />
+            <Stack.Screen name="EditPost" component={PostInput} options={editPostScreenOptions} />
+        </Stack.Navigator>
+    );
+};
+
+const mapStateToProps = (state: AppState) => {
+    return {
+        token: state.auth.token,
+    };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+        onGetUserPosts: (token?: string | null) => dispatch(getUserPosts(token)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OwnerPostsStack);

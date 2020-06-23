@@ -5,6 +5,14 @@ import {
     CREATE_POST_FAIL,
     POSTS_DISMISS_ERROR,
     DISABLE_GO_BACK,
+    GET_ALL_POSTS,
+    GET_ALL_POSTS_START,
+    GET_ALL_POSTS_SUCCESS,
+    GET_ALL_POSTS_FAIL,
+    GET_USER_POSTS,
+    GET_USER_POSTS_START,
+    GET_USER_POSTS_SUCCESS,
+    GET_USER_POSTS_FAIL,
 } from '../actions/actionTypes';
 import { userData } from './auth.module';
 
@@ -53,10 +61,56 @@ export interface disableGoBackType {
     type: typeof DISABLE_GO_BACK;
 }
 
+export interface getAllPostsType {
+    type: typeof GET_ALL_POSTS;
+    token?: string | null;
+}
+
+export interface getAllPostsStartType {
+    type: typeof GET_ALL_POSTS_START;
+}
+
+export interface getAllPostsSuccessType {
+    type: typeof GET_ALL_POSTS_SUCCESS;
+    posts: postData[];
+}
+
+export interface getAllPostsFailType {
+    type: typeof GET_ALL_POSTS_FAIL;
+    error: any;
+}
+
+export interface getUserPostsType {
+    type: typeof GET_USER_POSTS;
+    token?: string | null;
+}
+
+export interface getUserPostsStartType {
+    type: typeof GET_USER_POSTS_START;
+}
+
+export interface getUserPostsSuccessType {
+    type: typeof GET_USER_POSTS_SUCCESS;
+    posts: postData[];
+}
+
+export interface getUserPostsFailType {
+    type: typeof GET_USER_POSTS_FAIL;
+    error: any;
+}
+
 export type postsActionType =
     | createPostType
     | createPostSuccessType
     | createPostStartType
     | createPostFailType
     | postsDismissErrorType
-    | disableGoBackType;
+    | disableGoBackType
+    | getAllPostsType
+    | getAllPostsStartType
+    | getAllPostsSuccessType
+    | getAllPostsFailType
+    | getUserPostsType
+    | getUserPostsStartType
+    | getUserPostsSuccessType
+    | getUserPostsFailType;
