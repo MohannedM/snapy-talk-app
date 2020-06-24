@@ -27,7 +27,7 @@ export interface postData {
     title: string;
     description: string;
     imageUrl: string;
-    user: userData | string;
+    user: userData;
     likers?: userData[];
     createdAt?: string;
     updatedAt?: string;

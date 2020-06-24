@@ -64,7 +64,6 @@ interface Styles {
 const styles = StyleSheet.create<Styles>({
     cardStyle: {
         width: '90%',
-        minHeight: '30%',
         backgroundColor: '#fff',
         margin: '3%',
     },

@@ -8,10 +8,11 @@ import Colors from '../constants/Colors';
 import Feed from '../screens/Feed';
 import PostDetails from '../screens/PostDetails';
 import { connect } from 'react-redux';
-import { postInputType, createPostType, getUserPostsType } from '../store/types/posts.module';
+import { getUserPostsType, postData } from '../store/types/posts.module';
 import { Dispatch } from 'redux';
-import { createPost, getUserPosts } from '../store/actions';
+import { getUserPosts } from '../store/actions';
 import { AppState } from '../store';
+import { useIsFocused } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
@@ -75,15 +76,26 @@ export const detailsScreenOptions = (navData: any) => {
 interface IProps {
     token?: string | null;
     onGetUserPosts: (token?: string | null) => getUserPostsType;
+    loading: boolean;
+    posts: postData[];
+    navigation: StackNavigationProp<any, any>;
 }
 
 const OwnerPostsStack: React.FC<IProps> = (props) => {
+    const isFocused = useIsFocused();
+
     useEffect(() => {
-        props.onGetUserPosts(props.token);
-    }, []);
+        if (isFocused) {
+            props.onGetUserPosts(props.token);
+        }
+    }, [isFocused]);
     return (
         <Stack.Navigator>
-            <Stack.Screen name="OwnerPosts" component={Feed} options={ownerPostsScreenOptions} />
+            <Stack.Screen
+                name="OwnerPosts"
+                options={ownerPostsScreenOptions}
+                children={() => <Feed navigation={props.navigation} loading={props.loading} posts={props.posts} />}
+            />
             <Stack.Screen name="AddPost" component={PostInput} options={editPostScreenOptions} />
             <Stack.Screen name="Details" component={PostDetails} options={detailsScreenOptions} />
             <Stack.Screen name="EditPost" component={PostInput} options={editPostScreenOptions} />
@@ -94,6 +106,8 @@ const OwnerPostsStack: React.FC<IProps> = (props) => {
 const mapStateToProps = (state: AppState) => {
     return {
         token: state.auth.token,
+        loading: state.posts.loading,
+        posts: state.posts.userPosts,
     };
 };
 

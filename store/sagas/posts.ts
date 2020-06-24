@@ -9,6 +9,8 @@ import {
     getAllPostsFail,
     getUserPostsStart,
     getUserPostsFail,
+    getAllPostsSuccess,
+    getUserPostsSuccess,
 } from '../actions';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../env';
@@ -39,7 +41,7 @@ export function* createPostSaga(action: createPostType) {
         const graphqlQuery = {
             query: `
                 mutation{
-                    createPost(postInput: {title: "${action.postData.title}", description: "${action.postData.description}", imageUrl: "${action.postData.title}"}){
+                    createPost(postInput: {title: "${action.postData.title}", description: "${action.postData.description}", imageUrl: "${action.postData.imageUri}"}){
                         _id
                         title
                         description
@@ -70,7 +72,6 @@ export function* createPostSaga(action: createPostType) {
 }
 
 export function* getAllPostsSaga(action: getAllPostsType) {
-    console.log('GET ALL POSTS HAVE BEEN CALLED');
     yield put(getAllPostsStart());
     try {
         const graphqlQuery = {
@@ -99,7 +100,7 @@ export function* getAllPostsSaga(action: getAllPostsType) {
                 Authorization: `Bearer ${action.token}`,
             },
         });
-        yield put(result.data.data.getAllPosts);
+        yield put(getAllPostsSuccess(result.data.data.getAllPosts));
     } catch (error) {
         console.log(error);
         yield put(getAllPostsFail(error));
@@ -107,7 +108,6 @@ export function* getAllPostsSaga(action: getAllPostsType) {
 }
 
 export function* getUserPostsSaga(action: getUserPostsType) {
-    console.log('GET USER POSTS HAVE BEEN CALLED');
     yield put(getUserPostsStart());
     try {
         const graphqlQuery = {
@@ -119,6 +119,11 @@ export function* getUserPostsSaga(action: getUserPostsType) {
                     imageUrl
                     createdAt
                     updatedAt
+                    user{
+                        _id
+                        firstName
+                        lastName
+                    }
                     likers{
                         _id
                     }
@@ -131,7 +136,7 @@ export function* getUserPostsSaga(action: getUserPostsType) {
                 Authorization: `Bearer ${action.token}`,
             },
         });
-        yield put(result.data.data.getUserPosts);
+        yield put(getUserPostsSuccess(result.data.data.getUserPosts));
     } catch (error) {
         console.log(error);
         yield put(getUserPostsFail(error));
