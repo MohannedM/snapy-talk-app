@@ -28,4 +28,8 @@ export {
     getUserPostsFail,
     getUserPostsStart,
     getUserPostsSuccess,
+    editPost,
+    editPostFail,
+    editPostStart,
+    editPostSuccess,
 } from './posts';

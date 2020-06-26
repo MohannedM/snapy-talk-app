@@ -60,7 +60,7 @@ const ownerPostsScreenOptions = (navData: any) => {
 const editPostScreenOptions = (navData: any) => {
     const params = navData.route.params ? navData.route.params : {};
     return {
-        title: params.productId ? 'Edit Snap' : 'Add a Snap',
+        title: params.post ? 'Edit Snap' : 'Add a Snap',
         ...genericScreenOptions(navData),
     };
 };
@@ -94,10 +94,17 @@ const OwnerPostsStack: React.FC<IProps> = (props) => {
             <Stack.Screen
                 name="OwnerPosts"
                 options={ownerPostsScreenOptions}
-                children={() => <Feed navigation={props.navigation} loading={props.loading} posts={props.posts} />}
+                children={() => (
+                    <Feed
+                        navigation={props.navigation}
+                        loading={props.loading}
+                        posts={props.posts}
+                        feedPlace="my-stories"
+                    />
+                )}
             />
             <Stack.Screen name="AddPost" component={PostInput} options={editPostScreenOptions} />
-            <Stack.Screen name="Details" component={PostDetails} options={detailsScreenOptions} />
+            <Stack.Screen name="OwnerPostDetails" component={PostDetails} options={detailsScreenOptions} />
             <Stack.Screen name="EditPost" component={PostInput} options={editPostScreenOptions} />
         </Stack.Navigator>
     );

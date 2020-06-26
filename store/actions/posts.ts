@@ -13,6 +13,10 @@ import {
     GET_USER_POSTS_START,
     GET_USER_POSTS_SUCCESS,
     GET_USER_POSTS_FAIL,
+    EDIT_POST,
+    EDIT_POST_START,
+    EDIT_POST_SUCCESS,
+    EDIT_POST_FAIL,
 } from './actionTypes';
 import {
     postInputType,
@@ -31,6 +35,11 @@ import {
     getUserPostsStartType,
     getUserPostsSuccessType,
     getUserPostsFailType,
+    postUpdateInputType,
+    editPostType,
+    editPostStartType,
+    editPostSuccessType,
+    editPostFailType,
 } from '../types/posts.module';
 
 export const createPost: (postData: postInputType, token?: string | null) => createPostType = (postData, token) => {
@@ -57,6 +66,34 @@ export const createPostSuccess: (postData: postData) => createPostSuccessType = 
 export const createPostFail: (error: string) => createPostFailType = (error) => {
     return {
         type: CREATE_POST_FAIL,
+        error,
+    };
+};
+
+export const editPost: (postData: postUpdateInputType, token?: string | null) => editPostType = (postData, token) => {
+    return {
+        type: EDIT_POST,
+        postData,
+        token,
+    };
+};
+
+export const editPostStart: () => editPostStartType = () => {
+    return {
+        type: EDIT_POST_START,
+    };
+};
+
+export const editPostSuccess: (postData: postData) => editPostSuccessType = (postData) => {
+    return {
+        type: EDIT_POST_SUCCESS,
+        postData,
+    };
+};
+
+export const editPostFail: (error: any) => editPostFailType = (error) => {
+    return {
+        type: EDIT_POST_FAIL,
         error,
     };
 };

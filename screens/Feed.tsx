@@ -9,6 +9,7 @@ interface Props {
     navigation: StackNavigationProp<any, any>;
     loading: boolean;
     posts: postData[];
+    feedPlace: 'home' | 'my-stories';
 }
 
 const Home: React.FC<Props> = (props) => {
@@ -25,7 +26,14 @@ const Home: React.FC<Props> = (props) => {
                             author={item.user.firstName + ' ' + item.user.lastName}
                             imageUrl={item.imageUrl}
                             title={item.title}
-                            onViewDetails={() => props.navigation.navigate('Details', { title: item.title })}
+                            onViewDetails={() => {
+                                const navigateTo = props.feedPlace === 'home' ? 'HomePostDetails' : 'OwnerPostDetails';
+                                props.navigation.navigate(navigateTo, {
+                                    postId: item._id,
+                                    title: item.title,
+                                    feedPlace: props.feedPlace,
+                                });
+                            }}
                         />
                     )}
                     keyExtractor={(item) => item._id}

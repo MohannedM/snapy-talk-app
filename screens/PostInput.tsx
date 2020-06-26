@@ -17,12 +17,25 @@ interface Props {
     token?: string | null;
     navigation: StackNavigationProp<any, any>;
     onAddPost: (postData: postInputType, token?: string | null) => createPostType;
+    route: {
+        params?: {
+            post: postData;
+        };
+    };
     loading: boolean;
     error: string | null;
     goBack: boolean;
 }
 
 const PostInput: React.FC<Props> = (props) => {
+    const post = props.route.params ? props.route.params.post : null;
+    useEffect(() => {
+        if (post) {
+            setUserInput(post.title, 'title', true, 'Title should be from 4 to 25 characters.');
+            setUserInput(post.description, 'description', true, 'Description should be from 10 to 100 characters.');
+            setUserInput(post.imageUrl, 'imageUri', true, 'Image should be a URL.');
+        }
+    }, [post]);
     const [inputState, setInputState] = useState({
         title: '',
         description: '',

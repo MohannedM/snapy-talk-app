@@ -58,9 +58,11 @@ const FeedStack: React.FC<IProps> = (props) => {
             <Stack.Screen
                 name="Home"
                 options={homeScreenOptions}
-                children={() => <Feed navigation={props.navigation} loading={props.loading} posts={props.posts} />}
+                children={() => (
+                    <Feed navigation={props.navigation} loading={props.loading} posts={props.posts} feedPlace="home" />
+                )}
             />
-            <Stack.Screen name="Details" component={PostDetails} options={detailsScreenOptions} />
+            <Stack.Screen name="HomePostDetails" component={PostDetails} options={detailsScreenOptions} />
         </Stack.Navigator>
     );
 };

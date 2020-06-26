@@ -13,10 +13,21 @@ import {
     GET_USER_POSTS_START,
     GET_USER_POSTS_SUCCESS,
     GET_USER_POSTS_FAIL,
+    EDIT_POST,
+    EDIT_POST_START,
+    EDIT_POST_SUCCESS,
+    EDIT_POST_FAIL,
 } from '../actions/actionTypes';
 import { userData } from './auth.module';
 
 export interface postInputType {
+    title: string;
+    description: string;
+    imageUri: string;
+}
+
+export interface postUpdateInputType {
+    postId: string;
     title: string;
     description: string;
     imageUri: string;
@@ -50,7 +61,27 @@ export interface createPostSuccessType {
 
 export interface createPostFailType {
     type: typeof CREATE_POST_FAIL;
-    error: string;
+    error: any;
+}
+
+export interface editPostType {
+    type: typeof EDIT_POST;
+    token?: string | null;
+    postData: postUpdateInputType;
+}
+
+export interface editPostStartType {
+    type: typeof EDIT_POST_START;
+}
+
+export interface editPostSuccessType {
+    type: typeof EDIT_POST_SUCCESS;
+    postData: postData;
+}
+
+export interface editPostFailType {
+    type: typeof EDIT_POST_FAIL;
+    error: any;
 }
 
 export interface postsDismissErrorType {
@@ -104,6 +135,10 @@ export type postsActionType =
     | createPostSuccessType
     | createPostStartType
     | createPostFailType
+    | editPostType
+    | editPostStartType
+    | editPostSuccessType
+    | editPostFailType
     | postsDismissErrorType
     | disableGoBackType
     | getAllPostsType
