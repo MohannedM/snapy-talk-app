@@ -1,5 +1,13 @@
 import { put, delay } from 'redux-saga/effects';
-import { createPostType, getAllPostsType, getUserPostsType } from '../types/posts.module';
+import {
+    createPostType,
+    getAllPostsType,
+    getUserPostsType,
+    editPostType,
+    deletePostType,
+    likePostType,
+    dislikePostType,
+} from '../types/posts.module';
 import {
     createPostStart,
     createPostFail,
@@ -11,6 +19,19 @@ import {
     getUserPostsFail,
     getAllPostsSuccess,
     getUserPostsSuccess,
+    editPostStart,
+    editPostFail,
+    editPostSuccess,
+    getUserPosts,
+    deletePostStart,
+    deletePostFail,
+    deletePostSuccess,
+    likePostStart,
+    likePostFail,
+    likePostSuccess,
+    dislikePostStart,
+    dislikePostSuccess,
+    dislikePostFail,
 } from '../actions';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../env';
@@ -83,6 +104,7 @@ export function* getAllPostsSaga(action: getAllPostsType) {
                     imageUrl
                     createdAt
                     updatedAt
+                    isLiked
                     user{
                         _id
                         firstName
@@ -119,6 +141,7 @@ export function* getUserPostsSaga(action: getUserPostsType) {
                     imageUrl
                     createdAt
                     updatedAt
+                    isLiked
                     user{
                         _id
                         firstName
@@ -140,5 +163,106 @@ export function* getUserPostsSaga(action: getUserPostsType) {
     } catch (error) {
         console.log(error);
         yield put(getUserPostsFail(error));
+    }
+}
+
+export function* editPostSaga(action: editPostType) {
+    yield put(editPostStart());
+    try {
+        const graphqlQuery = {
+            query: `
+                mutation{
+                    updatePost(postInput: {postId: "${action.postData.postId}", title: "${action.postData.title}",  description: "${action.postData.description}", imageUrl: "${action.postData.imageUri}"}){
+                        _id
+                        title
+                        description
+                        imageUrl
+                        user{
+                            _id
+                        }
+                    }
+                }
+            `,
+        };
+        const result = yield axios.post(`${LOCAL_HOST_URL}/graphql`, graphqlQuery, {
+            headers: {
+                Authorization: `Bearer ${action.token}`,
+            },
+        });
+
+        yield put(editPostSuccess(result.data.data.updatePost));
+        yield delay(100);
+        yield put(disableGoBack());
+    } catch (error) {
+        yield put(editPostFail(error));
+    }
+}
+
+export function* deletePostSaga(action: deletePostType) {
+    yield put(deletePostStart());
+    try {
+        const graphqlQuery = {
+            query: `
+                mutation{
+                    deletePost(postId: "${action.postId}")
+                }
+            `,
+        };
+        yield axios.post(`${LOCAL_HOST_URL}/graphql`, graphqlQuery, {
+            headers: {
+                Authorization: `Bearer ${action.token}`,
+            },
+        });
+        yield put(deletePostSuccess(action.postId));
+        yield delay(100);
+        yield put(disableGoBack());
+    } catch (error) {
+        yield put(deletePostFail(error));
+    }
+}
+
+export function* likePostSaga(action: likePostType) {
+    yield put(likePostStart(action.postId, action.place));
+    try {
+        const graphqlQuery = {
+            query: `
+            mutation{
+                likePost(postId: "${action.postId}")
+            }
+            `,
+        };
+
+        yield axios.post(`${LOCAL_HOST_URL}/graphql`, graphqlQuery, {
+            headers: {
+                Authorization: `Bearer ${action.token}`,
+            },
+        });
+
+        yield put(likePostSuccess(action.postId, action.place));
+    } catch (error) {
+        yield put(likePostFail(action.postId, action.place, error));
+    }
+}
+
+export function* dislikePostSaga(action: dislikePostType) {
+    yield put(dislikePostStart(action.postId, action.place));
+    try {
+        const graphqlQuery = {
+            query: `
+            mutation{
+                dislikePost(postId: "${action.postId}")
+            }
+            `,
+        };
+
+        yield axios.post(`${LOCAL_HOST_URL}/graphql`, graphqlQuery, {
+            headers: {
+                Authorization: `Bearer ${action.token}`,
+            },
+        });
+
+        yield put(dislikePostSuccess(action.postId, action.place));
+    } catch (error) {
+        yield put(dislikePostFail(action.postId, action.place, error));
     }
 }

@@ -9,8 +9,20 @@ import {
     CREATE_POST,
     GET_ALL_POSTS,
     GET_USER_POSTS,
+    EDIT_POST,
+    DELETE_POST,
+    LIKE_POST,
+    DISLIKE_POST,
 } from '../actions/actionTypes';
-import { createPostSaga, getAllPostsSaga, getUserPostsSaga } from './posts';
+import {
+    createPostSaga,
+    getAllPostsSaga,
+    getUserPostsSaga,
+    editPostSaga,
+    deletePostSaga,
+    likePostSaga,
+    dislikePostSaga,
+} from './posts';
 
 export function* authSaga() {
     yield takeEvery(REGISTER, registerSaga);
@@ -23,4 +35,8 @@ export function* postsSage() {
     yield takeEvery(CREATE_POST, createPostSaga);
     yield takeEvery(GET_ALL_POSTS, getAllPostsSaga);
     yield takeEvery(GET_USER_POSTS, getUserPostsSaga);
+    yield takeEvery(EDIT_POST, editPostSaga);
+    yield takeEvery(DELETE_POST, deletePostSaga);
+    yield takeEvery(LIKE_POST, likePostSaga);
+    yield takeEvery(DISLIKE_POST, dislikePostSaga);
 }

@@ -1,15 +1,22 @@
-import React, { useLayoutEffect } from 'react';
-import { View, ScrollView, Text, StyleSheet, Dimensions, Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, ScrollView, Text, StyleSheet, Dimensions, Image, Alert } from 'react-native';
 import Card from '../components/UI/Card';
 import CustomButton from '../components/UI/CustomButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AppState } from '../store';
 import { connect } from 'react-redux';
-import { postData } from '../store/types/posts.module';
+import { postData, deletePostType } from '../store/types/posts.module';
+import { Dispatch } from 'redux';
+import { deletePost } from '../store/actions';
 
 interface IProps {
     navigation: StackNavigationProp<any, any>;
     post: (postId: string) => postData | undefined;
+    userPost: (postId: string) => postData | undefined;
+    goBack: boolean;
+    token?: string | null;
+    loading: boolean;
+    onDeletePost: (postId: string, token?: string | null) => deletePostType;
     route: {
         key: string;
         name: string;
@@ -22,9 +29,15 @@ interface IProps {
 }
 
 const PostDetails: React.FC<IProps> = (props) => {
+    const { goBack } = props;
+    useEffect(() => {
+        if (goBack) {
+            props.navigation.goBack();
+        }
+    }, [goBack]);
     const feedPlace = props.route.params ? props.route.params.feedPlace : null;
     const postId = props.route.params ? props.route.params.postId : '';
-    const post = props.post(postId);
+    const post = feedPlace && feedPlace === 'my-stories' ? props.userPost(postId) : props.post(postId);
     return (
         <ScrollView>
             <View style={styles.container}>
@@ -49,8 +62,22 @@ const PostDetails: React.FC<IProps> = (props) => {
                                 <CustomButton
                                     type={'Primary'}
                                     strength={2}
-                                    onPress={() => {}}
+                                    onPress={() => {
+                                        if (feedPlace === 'my-stories') {
+                                            Alert.alert('Delete Post?', 'Are you sure you want to delete this post?', [
+                                                { text: 'Cancel', style: 'cancel' },
+                                                {
+                                                    text: 'Yes',
+                                                    style: 'destructive',
+                                                    onPress: () => {
+                                                        props.onDeletePost(post._id, props.token);
+                                                    },
+                                                },
+                                            ]);
+                                        }
+                                    }}
                                     style={styles.actionButtons}
+                                    isLoading={props.loading}
                                 >
                                     Delete
                                 </CustomButton>
@@ -102,6 +129,16 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state: AppState) => {
     return {
         post: (postId: string) => state.posts.posts.find((post) => post._id === postId),
+        userPost: (postId: string) => state.posts.userPosts.find((post) => post._id === postId),
+        goBack: state.posts.goBack,
+        token: state.auth.token,
+        loading: state.posts.loading,
     };
 };
-export default connect(mapStateToProps)(PostDetails);
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+        onDeletePost: (postId: string, token?: string | null) => dispatch(deletePost(postId, token)),
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(PostDetails);

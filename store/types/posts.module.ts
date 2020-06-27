@@ -17,6 +17,18 @@ import {
     EDIT_POST_START,
     EDIT_POST_SUCCESS,
     EDIT_POST_FAIL,
+    DELETE_POST,
+    DELETE_POST_START,
+    DELETE_POST_SUCCESS,
+    DELETE_POST_FAIL,
+    LIKE_POST,
+    LIKE_POST_START,
+    LIKE_POST_SUCCESS,
+    LIKE_POST_FAIL,
+    DISLIKE_POST,
+    DISLIKE_POST_START,
+    DISLIKE_POST_SUCCESS,
+    DISLIKE_POST_FAIL,
 } from '../actions/actionTypes';
 import { userData } from './auth.module';
 
@@ -40,6 +52,8 @@ export interface postData {
     imageUrl: string;
     user: userData;
     likers?: userData[];
+    isLiked?: boolean;
+    likeLoading?: boolean;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -130,6 +144,78 @@ export interface getUserPostsFailType {
     error: any;
 }
 
+export interface deletePostType {
+    type: typeof DELETE_POST;
+    postId: string;
+    token?: string | null;
+}
+
+export interface deletePostStartType {
+    type: typeof DELETE_POST_START;
+}
+
+export interface deletePostSuccessType {
+    type: typeof DELETE_POST_SUCCESS;
+    postId: string;
+}
+
+export interface deletePostFailType {
+    type: typeof DELETE_POST_FAIL;
+    error: any;
+}
+
+export interface likePostType {
+    type: typeof LIKE_POST;
+    token?: string | null;
+    postId: string;
+    place: 'posts' | 'userPosts';
+}
+
+export interface likePostStartType {
+    type: typeof LIKE_POST_START;
+    postId: string;
+    place: 'posts' | 'userPosts';
+}
+
+export interface likePostSuccessType {
+    type: typeof LIKE_POST_SUCCESS;
+    postId: string;
+    place: 'posts' | 'userPosts';
+}
+
+export interface likePostFailType {
+    type: typeof LIKE_POST_FAIL;
+    postId: string;
+    error: any;
+    place: 'posts' | 'userPosts';
+}
+
+export interface dislikePostType {
+    type: typeof DISLIKE_POST;
+    token?: string | null;
+    postId: string;
+    place: 'posts' | 'userPosts';
+}
+
+export interface dislikePostStartType {
+    type: typeof DISLIKE_POST_START;
+    postId: string;
+    place: 'posts' | 'userPosts';
+}
+
+export interface dislikePostSuccessType {
+    type: typeof DISLIKE_POST_SUCCESS;
+    postId: string;
+    place: 'posts' | 'userPosts';
+}
+
+export interface dislikePostFailType {
+    type: typeof DISLIKE_POST_FAIL;
+    postId: string;
+    error: any;
+    place: 'posts' | 'userPosts';
+}
+
 export type postsActionType =
     | createPostType
     | createPostSuccessType
@@ -148,4 +234,16 @@ export type postsActionType =
     | getUserPostsType
     | getUserPostsStartType
     | getUserPostsSuccessType
-    | getUserPostsFailType;
+    | getUserPostsFailType
+    | deletePostFailType
+    | deletePostStartType
+    | deletePostType
+    | deletePostSuccessType
+    | likePostFailType
+    | likePostStartType
+    | likePostStartType
+    | likePostSuccessType
+    | dislikePostFailType
+    | dislikePostStartType
+    | dislikePostStartType
+    | dislikePostSuccessType;

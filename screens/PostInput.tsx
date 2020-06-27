@@ -5,8 +5,14 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ImagePicker from '../components/MainElements/ImagePicker';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Dispatch } from 'redux';
-import { createPost } from '../store/actions';
-import { postInputType, createPostType, postData } from '../store/types/posts.module';
+import { createPost, editPost } from '../store/actions';
+import {
+    postInputType,
+    createPostType,
+    postData,
+    postUpdateInputType,
+    editPostType,
+} from '../store/types/posts.module';
 import { connect } from 'react-redux';
 import { AppState } from '../store';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
@@ -25,6 +31,7 @@ interface Props {
     loading: boolean;
     error: string | null;
     goBack: boolean;
+    onEditPost: (postData: postUpdateInputType, token?: string | null) => editPostType;
 }
 
 const PostInput: React.FC<Props> = (props) => {
@@ -69,7 +76,7 @@ const PostInput: React.FC<Props> = (props) => {
             isDisabled = false;
         }
     }
-    const { onAddPost } = props;
+    const { onAddPost, onEditPost } = props;
     const { navigation } = props;
     React.useLayoutEffect(() => {
         navigation.setOptions({
@@ -83,14 +90,26 @@ const PostInput: React.FC<Props> = (props) => {
                             iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
                             onPress={() => {
                                 if (!isDisabled) {
-                                    onAddPost(
-                                        {
-                                            title: inputState.title,
-                                            description: inputState.description,
-                                            imageUri: inputState.imageUri,
-                                        },
-                                        props.token,
-                                    );
+                                    if (post) {
+                                        onEditPost(
+                                            {
+                                                postId: post._id,
+                                                title: inputState.title,
+                                                description: inputState.description,
+                                                imageUri: inputState.imageUri,
+                                            },
+                                            props.token,
+                                        );
+                                    } else {
+                                        onAddPost(
+                                            {
+                                                title: inputState.title,
+                                                description: inputState.description,
+                                                imageUri: inputState.imageUri,
+                                            },
+                                            props.token,
+                                        );
+                                    }
                                 } else {
                                     Alert.alert('Invalid Input!', 'Please check your input data.', [{ text: 'Okay' }]);
                                 }
@@ -103,7 +122,9 @@ const PostInput: React.FC<Props> = (props) => {
     });
     const { goBack } = props;
     useEffect(() => {
-        if (goBack) {
+        if (goBack && post) {
+            props.navigation.navigate('OwnerPosts');
+        } else if (goBack && !post) {
             props.navigation.goBack();
         }
     }, [goBack]);
@@ -138,8 +159,8 @@ const PostInput: React.FC<Props> = (props) => {
     };
 
     const setDescription = (value: string) => {
-        const isValid = value.length >= 10 && value.length <= 100;
-        setUserInput(value, 'description', isValid, 'Description should be from 10 to 100 characters.');
+        const isValid = value.length >= 10 && value.length <= 200;
+        setUserInput(value, 'description', isValid, 'Description should be from 10 to 200 characters.');
     };
 
     // const setImageUri = (value: string, isCancelled: boolean = false) => {
@@ -172,7 +193,7 @@ const PostInput: React.FC<Props> = (props) => {
                         multiline
                         style={styles.descriptionInput}
                         numberOfLines={7}
-                        maxLength={100}
+                        maxLength={200}
                         underlineColorAndroid="transparent"
                         onChangeText={setDescription}
                         hasError={inputState.errors.description.error}
@@ -229,6 +250,7 @@ const mapStateToProps = (state: AppState) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         onAddPost: (postData: postInputType, token?: string | null) => dispatch(createPost(postData, token)),
+        onEditPost: (postData: postUpdateInputType, token?: string | null) => dispatch(editPost(postData, token)),
     };
 };
 

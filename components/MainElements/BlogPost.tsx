@@ -11,10 +11,12 @@ import {
     ViewStyle,
     ImageStyle,
     TextStyle,
+    ActivityIndicator,
 } from 'react-native';
 import Colors from '../../constants/Colors';
 import Card from '../../components/UI/Card';
 import { AntDesign, Fontisto } from '@expo/vector-icons';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 interface Props {
     title: string;
@@ -22,23 +24,42 @@ interface Props {
     imageUrl: string;
     isLiked?: boolean;
     onViewDetails: () => void;
+    onLikePost: () => void;
+    likeLoading?: boolean;
 }
 
 const BlogPost: React.FC<Props> = (props) => {
     return (
         <Card style={styles.cardStyle}>
-            <Image
-                style={styles.cardImage}
-                source={{
-                    uri: props.imageUrl,
+            <TouchableWithoutFeedback
+                onPress={() => {
+                    props.onViewDetails();
                 }}
-            />
+            >
+                <Image
+                    style={styles.cardImage}
+                    source={{
+                        uri: props.imageUrl,
+                    }}
+                />
+            </TouchableWithoutFeedback>
             <View style={styles.cardTitleContainer}>
                 <Text style={styles.cardTitle}>{props.title}</Text>
                 <Text style={styles.cardOwner}>By: {props.author}</Text>
             </View>
             <View style={styles.actions}>
-                <AntDesign name={props.isLiked ? 'like1' : 'like2'} size={21} color={Colors.secondary[1]} />
+                {props.likeLoading ? (
+                    <ActivityIndicator color={Colors.secondary[1]} />
+                ) : (
+                    <AntDesign
+                        name={props.isLiked ? 'like1' : 'like2'}
+                        size={21}
+                        color={Colors.secondary[1]}
+                        onPress={() => {
+                            props.onLikePost();
+                        }}
+                    />
+                )}
                 <Fontisto
                     name="preview"
                     size={21}
