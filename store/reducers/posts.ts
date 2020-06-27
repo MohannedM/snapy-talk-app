@@ -16,12 +16,9 @@ import {
     DELETE_POST_START,
     DELETE_POST_SUCCESS,
     DELETE_POST_FAIL,
-    LIKE_POST_START,
-    LIKE_POST_SUCCESS,
-    LIKE_POST_FAIL,
-    DISLIKE_POST_START,
-    DISLIKE_POST_SUCCESS,
-    DISLIKE_POST_FAIL,
+    TOGGLE_LIKE_POST_START,
+    TOGGLE_LIKE_POST_SUCCESS,
+    TOGGLE_LIKE_POST_FAIL,
 } from '../actions/actionTypes';
 import { postsActionType, postData } from '../types/posts.module';
 
@@ -54,7 +51,7 @@ const postsReducer: (state: PostsStateType, action: postsActionType) => PostsSta
         case CREATE_POST_SUCCESS:
             return {
                 ...state,
-                userPosts: state.posts.concat(action.postData),
+                userPosts: state.userPosts.concat(action.postData),
                 loading: false,
                 goBack: true,
             };
@@ -79,6 +76,7 @@ const postsReducer: (state: PostsStateType, action: postsActionType) => PostsSta
                 ...state,
                 loading: false,
                 goBack: true,
+                userPosts,
             };
         case EDIT_POST_FAIL:
             return {
@@ -153,7 +151,7 @@ const postsReducer: (state: PostsStateType, action: postsActionType) => PostsSta
                 error: action.error,
                 loading: false,
             };
-        case LIKE_POST_START: {
+        case TOGGLE_LIKE_POST_START: {
             const posts = [...state[action.place]];
             const postIndex = posts.findIndex((post) => post._id === action.postId);
             posts[postIndex].likeLoading = true;
@@ -162,46 +160,17 @@ const postsReducer: (state: PostsStateType, action: postsActionType) => PostsSta
                 [action.place]: posts,
             };
         }
-        case LIKE_POST_SUCCESS: {
+        case TOGGLE_LIKE_POST_SUCCESS: {
             const posts = [...state[action.place]];
             const postIndex = posts.findIndex((post) => post._id === action.postId);
-            posts[postIndex].isLiked = true;
+            posts[postIndex].isLiked = !posts[postIndex].isLiked;
             posts[postIndex].likeLoading = false;
             return {
                 ...state,
                 [action.place]: posts,
             };
         }
-        case LIKE_POST_FAIL: {
-            const posts = [...state[action.place]];
-            const postIndex = posts.findIndex((post) => post._id === action.postId);
-            posts[postIndex].likeLoading = false;
-            return {
-                ...state,
-                [action.place]: posts,
-                error: action.error,
-            };
-        }
-        case DISLIKE_POST_START: {
-            const posts = [...state[action.place]];
-            const postIndex = posts.findIndex((post) => post._id === action.postId);
-            posts[postIndex].likeLoading = true;
-            return {
-                ...state,
-                [action.place]: posts,
-            };
-        }
-        case DISLIKE_POST_SUCCESS: {
-            const posts = [...state[action.place]];
-            const postIndex = posts.findIndex((post) => post._id === action.postId);
-            posts[postIndex].isLiked = false;
-            posts[postIndex].likeLoading = false;
-            return {
-                ...state,
-                [action.place]: posts,
-            };
-        }
-        case DISLIKE_POST_FAIL: {
+        case TOGGLE_LIKE_POST_FAIL: {
             const posts = [...state[action.place]];
             const postIndex = posts.findIndex((post) => post._id === action.postId);
             posts[postIndex].likeLoading = false;

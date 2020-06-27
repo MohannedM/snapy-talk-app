@@ -21,14 +21,10 @@ import {
     DELETE_POST_START,
     DELETE_POST_SUCCESS,
     DELETE_POST_FAIL,
-    LIKE_POST,
-    LIKE_POST_START,
-    LIKE_POST_SUCCESS,
-    LIKE_POST_FAIL,
-    DISLIKE_POST,
-    DISLIKE_POST_START,
-    DISLIKE_POST_SUCCESS,
-    DISLIKE_POST_FAIL,
+    TOGGLE_LIKE_POST,
+    TOGGLE_LIKE_POST_START,
+    TOGGLE_LIKE_POST_SUCCESS,
+    TOGGLE_LIKE_POST_FAIL,
 } from '../actions/actionTypes';
 import { userData } from './auth.module';
 
@@ -164,53 +160,28 @@ export interface deletePostFailType {
     error: any;
 }
 
-export interface likePostType {
-    type: typeof LIKE_POST;
+export interface toggleLikePostType {
+    type: typeof TOGGLE_LIKE_POST;
     token?: string | null;
     postId: string;
     place: 'posts' | 'userPosts';
+    isLiked?: boolean;
 }
 
-export interface likePostStartType {
-    type: typeof LIKE_POST_START;
+export interface toggleLikePostStartType {
+    type: typeof TOGGLE_LIKE_POST_START;
     postId: string;
     place: 'posts' | 'userPosts';
 }
 
-export interface likePostSuccessType {
-    type: typeof LIKE_POST_SUCCESS;
+export interface toggleLikePostSuccessType {
+    type: typeof TOGGLE_LIKE_POST_SUCCESS;
     postId: string;
     place: 'posts' | 'userPosts';
 }
 
-export interface likePostFailType {
-    type: typeof LIKE_POST_FAIL;
-    postId: string;
-    error: any;
-    place: 'posts' | 'userPosts';
-}
-
-export interface dislikePostType {
-    type: typeof DISLIKE_POST;
-    token?: string | null;
-    postId: string;
-    place: 'posts' | 'userPosts';
-}
-
-export interface dislikePostStartType {
-    type: typeof DISLIKE_POST_START;
-    postId: string;
-    place: 'posts' | 'userPosts';
-}
-
-export interface dislikePostSuccessType {
-    type: typeof DISLIKE_POST_SUCCESS;
-    postId: string;
-    place: 'posts' | 'userPosts';
-}
-
-export interface dislikePostFailType {
-    type: typeof DISLIKE_POST_FAIL;
+export interface toggleLikePostFailType {
+    type: typeof TOGGLE_LIKE_POST_FAIL;
     postId: string;
     error: any;
     place: 'posts' | 'userPosts';
@@ -239,11 +210,6 @@ export type postsActionType =
     | deletePostStartType
     | deletePostType
     | deletePostSuccessType
-    | likePostFailType
-    | likePostStartType
-    | likePostStartType
-    | likePostSuccessType
-    | dislikePostFailType
-    | dislikePostStartType
-    | dislikePostStartType
-    | dislikePostSuccessType;
+    | toggleLikePostFailType
+    | toggleLikePostStartType
+    | toggleLikePostSuccessType;

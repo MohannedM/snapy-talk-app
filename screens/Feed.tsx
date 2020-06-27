@@ -2,11 +2,11 @@ import React from 'react';
 import { SafeAreaView, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import BlogPost from '../components/MainElements/BlogPost';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { postData, likePostType, dislikePostType } from '../store/types/posts.module';
+import { postData, toggleLikePostType } from '../store/types/posts.module';
 import Colors from '../constants/Colors';
 import { AppState } from '../store';
 import { Dispatch } from 'redux';
-import { likePost, dislikePost } from '../store/actions';
+import { toggleLikePost } from '../store/actions';
 import { connect } from 'react-redux';
 
 interface Props {
@@ -15,8 +15,12 @@ interface Props {
     posts: postData[];
     feedPlace: 'home' | 'my-stories';
     token?: string | null;
-    onLikePost: (postId: string, place: 'posts' | 'userPosts', token?: string | null) => likePostType;
-    onDislikePost: (postId: string, place: 'posts' | 'userPosts', token?: string | null) => dislikePostType;
+    onToggleLikePost: (
+        postId: string,
+        place: 'posts' | 'userPosts',
+        token?: string | null,
+        isLiked?: boolean,
+    ) => toggleLikePostType;
 }
 
 const Home: React.FC<Props> = (props) => {
@@ -36,11 +40,7 @@ const Home: React.FC<Props> = (props) => {
                             likeLoading={item.likeLoading}
                             onLikePost={() => {
                                 const place = props.feedPlace === 'home' ? 'posts' : 'userPosts';
-                                if (!item.isLiked) {
-                                    props.onLikePost(item._id, place, props.token);
-                                } else {
-                                    props.onDislikePost(item._id, place, props.token);
-                                }
+                                props.onToggleLikePost(item._id, place, props.token, item.isLiked);
                             }}
                             onViewDetails={() => {
                                 const navigateTo = props.feedPlace === 'home' ? 'HomePostDetails' : 'OwnerPostDetails';
@@ -81,10 +81,8 @@ const mapStateTopProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        onLikePost: (postId: string, place: 'posts' | 'userPosts', token?: string | null) =>
-            dispatch(likePost(postId, place, token)),
-        onDislikePost: (postId: string, place: 'posts' | 'userPosts', token?: string | null) =>
-            dispatch(dislikePost(postId, place, token)),
+        onToggleLikePost: (postId: string, place: 'posts' | 'userPosts', token?: string | null, isLiked?: boolean) =>
+            dispatch(toggleLikePost(postId, place, token, isLiked)),
     };
 };
 

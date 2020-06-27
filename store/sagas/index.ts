@@ -11,8 +11,7 @@ import {
     GET_USER_POSTS,
     EDIT_POST,
     DELETE_POST,
-    LIKE_POST,
-    DISLIKE_POST,
+    TOGGLE_LIKE_POST,
 } from '../actions/actionTypes';
 import {
     createPostSaga,
@@ -20,8 +19,7 @@ import {
     getUserPostsSaga,
     editPostSaga,
     deletePostSaga,
-    likePostSaga,
-    dislikePostSaga,
+    toggleLikePostSaga,
 } from './posts';
 
 export function* authSaga() {
@@ -37,6 +35,5 @@ export function* postsSage() {
     yield takeEvery(GET_USER_POSTS, getUserPostsSaga);
     yield takeEvery(EDIT_POST, editPostSaga);
     yield takeEvery(DELETE_POST, deletePostSaga);
-    yield takeEvery(LIKE_POST, likePostSaga);
-    yield takeEvery(DISLIKE_POST, dislikePostSaga);
+    yield takeEvery(TOGGLE_LIKE_POST, toggleLikePostSaga);
 }

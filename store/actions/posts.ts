@@ -21,14 +21,10 @@ import {
     DELETE_POST_START,
     DELETE_POST_SUCCESS,
     DELETE_POST_FAIL,
-    LIKE_POST,
-    LIKE_POST_START,
-    LIKE_POST_SUCCESS,
-    LIKE_POST_FAIL,
-    DISLIKE_POST,
-    DISLIKE_POST_START,
-    DISLIKE_POST_SUCCESS,
-    DISLIKE_POST_FAIL,
+    TOGGLE_LIKE_POST,
+    TOGGLE_LIKE_POST_START,
+    TOGGLE_LIKE_POST_SUCCESS,
+    TOGGLE_LIKE_POST_FAIL,
 } from './actionTypes';
 import {
     postInputType,
@@ -56,14 +52,10 @@ import {
     deletePostStartType,
     deletePostSuccessType,
     deletePostFailType,
-    likePostType,
-    likePostStartType,
-    likePostSuccessType,
-    likePostFailType,
-    dislikePostType,
-    dislikePostStartType,
-    dislikePostSuccessType,
-    dislikePostFailType,
+    toggleLikePostType,
+    toggleLikePostStartType,
+    toggleLikePostSuccessType,
+    toggleLikePostFailType,
 } from '../types/posts.module';
 
 export const createPost: (postData: postInputType, token?: string | null) => createPostType = (postData, token) => {
@@ -150,93 +142,50 @@ export const deletePostFail: (error: any) => deletePostFailType = (error) => {
     };
 };
 
-export const likePost: (postId: string, place: 'posts' | 'userPosts', token?: string | null) => likePostType = (
-    postId,
-    place,
-    token,
-) => {
+export const toggleLikePost: (
+    postId: string,
+    place: 'posts' | 'userPosts',
+    token?: string | null,
+    isLiked?: boolean,
+) => toggleLikePostType = (postId, place, token, isLiked) => {
     return {
-        type: LIKE_POST,
+        type: TOGGLE_LIKE_POST,
         postId,
         token,
         place,
+        isLiked,
     };
 };
 
-export const likePostStart: (postId: string, place: 'posts' | 'userPosts') => likePostStartType = (postId, place) => {
+export const toggleLikePostStart: (postId: string, place: 'posts' | 'userPosts') => toggleLikePostStartType = (
+    postId,
+    place,
+) => {
     return {
-        type: LIKE_POST_START,
+        type: TOGGLE_LIKE_POST_START,
         place,
         postId,
     };
 };
 
-export const likePostSuccess: (postId: string, place: 'posts' | 'userPosts') => likePostSuccessType = (
+export const toggleLikePostSuccess: (postId: string, place: 'posts' | 'userPosts') => toggleLikePostSuccessType = (
     postId,
     place,
 ) => {
     return {
-        type: LIKE_POST_SUCCESS,
+        type: TOGGLE_LIKE_POST_SUCCESS,
         place,
         postId,
     };
 };
 
-export const likePostFail: (postId: string, place: 'posts' | 'userPosts', error: any) => likePostFailType = (
-    postId,
-    place,
-    error,
-) => {
+export const toggleLikePostFail: (
+    postId: string,
+    place: 'posts' | 'userPosts',
+    error: any,
+) => toggleLikePostFailType = (postId, place, error) => {
     return {
-        type: LIKE_POST_FAIL,
-        place,
-        postId,
-        error,
-    };
-};
-
-export const dislikePost: (postId: string, place: 'posts' | 'userPosts', token?: string | null) => dislikePostType = (
-    postId,
-    place,
-    token,
-) => {
-    return {
-        type: DISLIKE_POST,
-        postId,
-        token,
-        place,
-    };
-};
-
-export const dislikePostStart: (postId: string, place: 'posts' | 'userPosts') => dislikePostStartType = (
-    postId,
-    place,
-) => {
-    return {
-        type: DISLIKE_POST_START,
-        place,
-        postId,
-    };
-};
-
-export const dislikePostSuccess: (postId: string, place: 'posts' | 'userPosts') => dislikePostSuccessType = (
-    postId,
-    place,
-) => {
-    return {
-        type: DISLIKE_POST_SUCCESS,
-        place,
-        postId,
-    };
-};
-
-export const dislikePostFail: (postId: string, place: 'posts' | 'userPosts', error: any) => dislikePostFailType = (
-    postId,
-    place,
-    error,
-) => {
-    return {
-        type: DISLIKE_POST_FAIL,
+        type: TOGGLE_LIKE_POST_FAIL,
         place,
         postId,
         error,

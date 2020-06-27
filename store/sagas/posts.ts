@@ -5,8 +5,7 @@ import {
     getUserPostsType,
     editPostType,
     deletePostType,
-    likePostType,
-    dislikePostType,
+    toggleLikePostType,
 } from '../types/posts.module';
 import {
     createPostStart,
@@ -22,16 +21,12 @@ import {
     editPostStart,
     editPostFail,
     editPostSuccess,
-    getUserPosts,
     deletePostStart,
     deletePostFail,
     deletePostSuccess,
-    likePostStart,
-    likePostFail,
-    likePostSuccess,
-    dislikePostStart,
-    dislikePostSuccess,
-    dislikePostFail,
+    toggleLikePostStart,
+    toggleLikePostFail,
+    toggleLikePostSuccess,
 } from '../actions';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../env';
@@ -221,13 +216,14 @@ export function* deletePostSaga(action: deletePostType) {
     }
 }
 
-export function* likePostSaga(action: likePostType) {
-    yield put(likePostStart(action.postId, action.place));
+export function* toggleLikePostSaga(action: toggleLikePostType) {
+    yield put(toggleLikePostStart(action.postId, action.place));
     try {
+        const mutationAction = action.isLiked ? 'dislikePost' : 'likePost';
         const graphqlQuery = {
             query: `
             mutation{
-                likePost(postId: "${action.postId}")
+                ${mutationAction}(postId: "${action.postId}")
             }
             `,
         };
@@ -238,31 +234,8 @@ export function* likePostSaga(action: likePostType) {
             },
         });
 
-        yield put(likePostSuccess(action.postId, action.place));
+        yield put(toggleLikePostSuccess(action.postId, action.place));
     } catch (error) {
-        yield put(likePostFail(action.postId, action.place, error));
-    }
-}
-
-export function* dislikePostSaga(action: dislikePostType) {
-    yield put(dislikePostStart(action.postId, action.place));
-    try {
-        const graphqlQuery = {
-            query: `
-            mutation{
-                dislikePost(postId: "${action.postId}")
-            }
-            `,
-        };
-
-        yield axios.post(`${LOCAL_HOST_URL}/graphql`, graphqlQuery, {
-            headers: {
-                Authorization: `Bearer ${action.token}`,
-            },
-        });
-
-        yield put(dislikePostSuccess(action.postId, action.place));
-    } catch (error) {
-        yield put(dislikePostFail(action.postId, action.place, error));
+        yield put(toggleLikePostFail(action.postId, action.place, error));
     }
 }
